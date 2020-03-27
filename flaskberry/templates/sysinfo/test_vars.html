@@ -1,0 +1,27 @@
+suka {{cpu_percent}} <br/>
+{{os_name}}
+
+<div class="row g-row">
+	 <div class="three columns g-head">
+		 Total Memory
+	 </div>
+	 <div class="nine columns g-row">
+		 {{memory_usage_info.total}} MB
+	 </div>
+ </div>
+ <div class="row g-row">
+	 <div class="three columns g-head">
+		 In Use
+	 </div>
+	 <div class="nine columns">
+		 {{memory_usage_info.used}} MB
+	 </div>
+ </div>
+ <div class="row g-row">
+	 <div class="three columns g-head">
+		 Free
+	 </div>
+	 <div class="nine columns">
+		 {{memory_usage_info.available}} MB
+	 </div>
+ </div>

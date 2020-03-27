@@ -1,0 +1,3 @@
+graft flaskberry/static
+graft flaskberry/templates
+global-exclude *.pyc
