@@ -1,6 +1,6 @@
 import threading
 import time
-import json
+import pickle
 import logging
 import socket
 import IMU_loop as IMU
@@ -29,11 +29,11 @@ def server():
         
         raw_data = IMU.get_buffer()
         
-        data = json.dumps(raw_data.tolist())
+        data = pickle.dumps(raw_data.tolist())
         
         IMU.buffer = np.zeros((1,6))
 #         print("Sending data: " + str(data))
-        c.send(str(data).encode("utf-8")) #send sensor data
+        c.send(data) #send sensor data
         print("Done!")
 #         e.clear()
     c.close()
