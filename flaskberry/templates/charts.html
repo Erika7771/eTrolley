@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>AdminLTE 3 | Sensor Readings</title>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href='../static/plugins/fontawesome-free/css/all.min.css'/>
+  <!-- IonIcons -->
+  <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href='../static/dist/css/adminlte.css'/>
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  
+     
+   <!-- jQuery -->
+   <script src="../static/plugins/jquery/jquery.min.js"></script>
+</head>
+<!--
+BODY TAG OPTIONS:
+=================
+Apply one or more of the following classes to to the body tag
+to get the desired effect
+|---------------------------------------------------------|
+|LAYOUT OPTIONS | sidebar-collapse                        |
+|               | sidebar-mini                            |
+|---------------------------------------------------------|
+-->
+<body class="hold-transition">
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-">
+            <h1 class="m-0 text-dark">Sensors Readings</h1>
+            <button class="btn btn-block btn-warning" onclick="ciao();">suki?</button>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card">  
+              <div class="card-body">
+                <div class="d-flex">
+                  <p class="d-flex flex-column">
+                    <span class="text-bold text-lg">IMU 1.2 Acceleration</span> 
+                    <i class="fa fa-tachometer-alt monitorIMU12" style="cursor: pointer;"></i>
+                    &nbsp;&nbsp; <i class="fa fa-sync reloadIMU12" style="cursor: pointer;"></i>
+                  </p>
+                </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                  <canvas id="IMU12" height="200"></canvas>
+                </div>
+
+                <div class="d-flex flex-row justify-content-end">
+                  <span class="mr-2">
+                    <i class="fas fa-square text-lightblue"></i> Acc_x
+                  </span>
+                  <span class="mr-2">
+                    <i class="fas fa-square text-lightgreen"></i> Acc_y
+                  </span>
+				  <span>
+                    <i class="fas fa-square text-darksalmon" ></i> Acc_z
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <script type="text/javascript">
+              
+              
+              
+            </script>
+            
+            <!-- /.card -->
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex">
+                  <p class="d-flex flex-column">
+                    <span class="text-bold text-lg">IMU 1.2 Angular Velocity</span>
+                  </p>
+                </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                  <canvas id="IMUangVel" height="200"></canvas>
+                </div>
+
+                <div class="d-flex flex-row justify-content-end">
+                  <span class="mr-2">
+                    <i class="fas fa-square text-lightblue"></i> Ang_vel_x 
+                  </span>
+                  <span class="mr-2">
+                    <i class="fas fa-square text-lightgreen"></i> Ang_vel_y 
+                  </span>
+				  <span>
+                    <i class="fas fa-square text-darksalmon" ></i> Ang_vel_z
+                  </span>
+                  
+                </div>
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>  
+          
+          <script type="text/javascript">             
+             function ciao(){
+                
+               alert("suka");
+            }
+         
+          </script>
+
+          <div class="col-lg-6">
+            <div class="card">  
+              <div class="card-body">
+                <div class="d-flex">
+                  <p class="d-flex flex-column">
+                    <span class="text-bold text-lg">IMU SparkFun Acceleration</span>
+                  </p>
+                </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                  <canvas id="IMUsf" height="200"></canvas>
+                </div>
+
+                <div class="d-flex flex-row justify-content-end">
+                  <span class="mr-2">
+                    <i class="fas fa-square text-lightblue"></i> Acc_x
+                  </span>
+                  <span class="mr-2">
+                    <i class="fas fa-square text-lightgreen"></i> Acc_y
+                  </span>
+				  <span>
+                    <i class="fas fa-square text-darksalmon" ></i> Acc_z
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!-- /.card -->
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex">
+                  <p class="d-flex flex-column">
+                    <span class="text-bold text-lg">IMU SparkFun Angular Velocity</span>
+                  </p>
+                </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                  <canvas id="IMUsfvel" height="200"></canvas>
+                </div>
+
+                <div class="d-flex flex-row justify-content-end">
+                  <span class="mr-2">
+                    <i class="fas fa-square text-lightblue"></i> Ang_vel_x 
+                  </span>
+                  <span class="mr-2">
+                    <i class="fas fa-square text-lightgreen"></i> Ang_vel_y 
+                  </span>
+				  <span>
+                    <i class="fas fa-square text-darksalmon" ></i> Ang_vel_z
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>		  
+		  
+		  <div class="col-lg-6">
+            <div class="card">  
+              <div class="card-body">
+                <div class="d-flex">
+                  <p class="d-flex flex-column">
+                    <span class="text-bold text-lg">Arduino</span>
+                  </p>
+                </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                  <canvas id="Arduino" height="200"></canvas>
+                </div>
+
+                <div class="d-flex flex-row justify-content-end">
+                  <span class="mr-2">
+                    <i class="fas fa-square text-lightblue"></i> Data
+                  </span>                 
+                </div>
+              </div>
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col-md-6 -->
+          <div class="col-lg-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex">
+                  <p class="d-flex flex-column">
+                    <span class="text-bold text-lg">Load Cell</span>
+                  </p>
+                </div>
+                <!-- /.d-flex -->
+
+                <div class="position-relative mb-4">
+                  <canvas id="loadCell" height="200"></canvas>
+                </div>
+
+                <div class="d-flex flex-row justify-content-end">
+                  <span class="mr-2">
+                    <i class="fas fa-square text-lightblue"></i> Force
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!-- /.card -->		
+          </div>
+          <!-- /.col-md-6 -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+
+  </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+
+
+<!-- Bootstrap -->
+<script src="../static/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE -->
+<script src="../static/dist/js/adminlte.js"></script>
+
+<!-- OPTIONAL SCRIPTS -->
+<script src="../static/plugins/chart.js/Chart.min.js"></script>
+<script src="../static/dist/js/demo.js"></script>
+<script src="../static/dist/js/pages/dashboard.js"></script>
+</body>
+</html>

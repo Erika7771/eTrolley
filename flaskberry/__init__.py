@@ -22,16 +22,18 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
+    
 
     from . import sysinfo
     app.register_blueprint(sysinfo.bp)
     
     from . import api
     app.register_blueprint(api.bp)
+    
+    from . import charts
+    app.register_blueprint(charts.bp)
 
     return app
-
 
 if __name__ == "__main__":
     app.run(debug=True)
