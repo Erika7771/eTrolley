@@ -29,7 +29,7 @@ def server():
         
         raw_data = IMU.get_buffer()
         
-        data = pickle.dumps(raw_data.tolist())
+        data = raw_data.dumps()
         
         IMU.buffer = np.zeros((1,6))
 #         print("Sending data: " + str(data))

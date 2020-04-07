@@ -1,6 +1,6 @@
 import socket
 import time
-import pickle
+import numpy as np
 
 host = socket.gethostname()  # get local machine name
 port = 8080  # Make sure it's within the > 1024 $$ <65535 range
@@ -13,7 +13,7 @@ def getData():
     s.send(message.encode('utf-8'))
     data = s.recv(4096)  # read max 2048 bytes
     print('Received from server: \n')
-    return pickle.loads(data)
+    return np.loads(data)
 
 def closeSocket():
     s.close()

@@ -23,7 +23,7 @@ ipcon.connect(HOST, PORT) # Connect to brickd
         # Don't use device before ipcon is connected
 
 x_len = 200
-y_range_IMU = [-1000, 1000]
+y_range_IMU = [-1500, 1500]
 y_range_SF = [-250, 250]
 x = np.arange(x_len)
 #IMU readings
@@ -78,7 +78,7 @@ def animate(i,acc,vel, accel, gyro):
     [x,y,z] = imu.get_acceleration()
     [xv,yv,zv] = imu.get_angular_velocity()
     ac = mpu9250.readAccel()
-    print(ac)
+#     print(ac)
     gy = mpu9250.readGyro()
     np_data = np.array(list(ac.values()))
     np_gyro = np.array(list(gy.values()))
