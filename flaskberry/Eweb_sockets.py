@@ -12,17 +12,17 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
 from __main__ import websocketio, app
 
+#logging.basicConfig(level=logging.DEBUG, format='(%(threadName)-9s) %(message)s',)
 
 bp = Blueprint('web_sockets', __name__)
 
-def webBridge(channel,data,namespace):
-    print("bridge")
-    websocketio.emit(channel,data,namespace=namespace)
+IMU_data = None
 
 ####### LOCAL SOCKETS #######
 
 sio = socketio.Client()
 sio.connect('http://localhost:5500',namespaces=['/sensors'])
+
 
 @sio.event
 def connect():
@@ -31,16 +31,7 @@ def connect():
 @sio.event
 def disconnect():
     print('disconnected from server')
-    
-@sio.on('my response')
-def my_response(sid,data):
-    print('grazie per i dati ', data)
-    
-@sio.on("receiveIMU_buffer",namespace='/sensors')
-def receiveIMU_buffer(data):
-    print("RECEIVED DATA")
-    webBridge('IMU_data',data,'/sensors')
-    
+
 
 
 
@@ -51,14 +42,22 @@ thread_lock = Lock()
 
 connectedWebClients = 0
 
+    
+def IMUCallback(data):
+    global IMU_data
+    IMU_data = data
+
 def getStream(ms=100):
+    
+    global IMU_data
     
     print("STREAM STARTED")
     
     ms = ms/1000
     while True:
         websocketio.sleep(ms)
-        sio.emit('getIMU_buffer', namespace='/sensors')
+        sio.emit('getIMU_buffer', '', namespace='/sensors',callback=IMUCallback)
+        websocketio.emit('IMU_data',IMU_data,namespace='/sensors')
 
 
 @bp.route('/')
@@ -71,9 +70,9 @@ def index():
 @websocketio.on('my_broadcast_event', namespace='/sensors')
 def test_broadcast_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': message['data'], 'count': session['receive_count']},
-         broadcast=True)
+#     emit('my_response',
+#          {'data': message['data'], 'count': session['receive_count']},
+#          broadcast=True)
 
 
 @websocketio.on('disconnect_request', namespace='/sensors')
@@ -86,9 +85,10 @@ def disconnect_request():
     # for this emit we use a callback function
     # when the callback function is invoked we know that the message has been
     # received and it is safe to disconnect
-    emit('my_response',
-         {'data': 'Disconnected!', 'count': session['receive_count']},
-         callback=can_disconnect)
+#     emit('my_response',
+#          {'data': 'Disconnected!', 'count': session['receive_count']},
+#          callback=can_disconnect)
+
 
 @websocketio.on('my_ping', namespace='/sensors')
 def ping_pong():
@@ -105,11 +105,13 @@ def connect():
     connectedWebClients += 1
     
     global thread
+    global thread_lock
+    
     with thread_lock:
         if thread is None:
-            thread = websocketio.start_background_task(getStream,ms=2000)
-    emit('my_response', {'data': 'connected from chart eheh'})    
-
+            thread = websocketio.start_background_task(getStream,ms=50)
+    emit('my_response', {'data': 'connected from chart eheh'})
+    
 
 @websocketio.on('disconnect', namespace='/sensors')
 def test_disconnect():

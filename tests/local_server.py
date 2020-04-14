@@ -20,17 +20,12 @@ def connect(sid, environ):
 @sio.event
 def disconnect(sid):
     print('disconnect ', sid)
-
-@sio.on('my_message',namespace='/sensors')
-def my_message(sid,data):
-    print("HO RICEVUTO+++++")
-    sio.emit('my response',{'dati':'sensore'},namespace='/sensors')
     
 @sio.on('getIMU_buffer',namespace='/sensors')
-def getIMU_buffer(sid):
+def getIMU_buffer(sid,data):
     raw_data = json.dumps(IMU.get_buffers().__dict__)
     IMU.r.clear()
-    sio.emit('receiveIMU_buffer',raw_data,namespace='/sensors')
+    return raw_data
 
 if __name__ == '__main__':
     

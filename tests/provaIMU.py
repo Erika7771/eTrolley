@@ -32,7 +32,7 @@ def cb_angular_velocity(x,y,z):
     
 def IMU_init():
     global ipcon
-    period = 100 #ms
+    period = 10 #ms
     ipcon = IPConnection() # Create IP connection object
     imu = BrickIMU(UID, ipcon) # Create device object
     ipcon.connect(HOST, PORT) # Connect to brickd

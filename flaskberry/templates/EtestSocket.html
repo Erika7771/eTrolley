@@ -27,7 +27,13 @@
             
             
             socket.on('IMU_data', function(msg, cb) {
-                $('#log').html(msg);
+                $('#log').html("<br/>"+msg);
+                if (cb)
+                    cb();
+            });
+            
+            socket.on('CANALEEEEEE', function(msg, cb) {
+                $('#log').append("<br/>"+msg);
                 if (cb)
                     cb();
             });
