@@ -1,7 +1,6 @@
 import psutil
 import numpy as np
-
-from . import socket_client
+import socket_client
 
 from flask import (
     Blueprint, jsonify
@@ -16,9 +15,7 @@ def cpu_usage():
 @bp.route('/imu_data')
 def imu_data():
     data = socket_client.getData()
-    acc_data = data[:,:3].tolist()
-    ang_data = data[:,-3:].tolist()
-    return jsonify({'acc_data':acc_data,'ang_data':ang_data}) #get json data
+    return jsonify({'acc_data':data['buff_acc'],'ang_data':data['buff_vel']}) #get json data
     
 def cpu_usage_info():
     return str(psutil.cpu_percent())

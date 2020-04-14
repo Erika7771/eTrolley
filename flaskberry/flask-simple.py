@@ -1,10 +1,6 @@
 import os
-from threading import Lock
-from flask import Flask, render_template, session, request, \
-    copy_current_request_context
-from flask_socketio import SocketIO, emit, join_room, leave_room, \
-    close_room, rooms, disconnect
-
+from flask import Flask
+from flask_socketio import SocketIO
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -19,17 +15,12 @@ app.config.from_mapping(
 )
 
 socketio = SocketIO(app, async_mode=async_mode ,cors_allowed_origins="*")
-thread = None
-thread_lock = Lock()
-
-ROOMS = {} # dict to track active rooms
 
 # ensure the instance folder exists
 try:
     os.makedirs(app.instance_path)
 except OSError:
     pass
-
 
 import sysinfo
 app.register_blueprint(sysinfo.bp)
@@ -40,8 +31,8 @@ app.register_blueprint(api.bp)
 import charts
 app.register_blueprint(charts.bp)
 
-import web_sockets
-app.register_blueprint(web_sockets.bp)
+import Eweb_sockets
+app.register_blueprint(Eweb_sockets.bp)
 
 
 if __name__ == "__main__":    
