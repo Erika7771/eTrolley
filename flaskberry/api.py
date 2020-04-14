@@ -1,6 +1,6 @@
 import psutil
 import numpy as np
-import socket_client
+#import socket_client
 
 from flask import (
     Blueprint, jsonify

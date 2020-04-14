@@ -7,7 +7,6 @@ PORT = 4223
 UID = "5VHux5" # Unique ID of IMU Brick
 
 import time
-import numpy as np
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.brick_imu import BrickIMU
 

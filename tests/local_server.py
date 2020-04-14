@@ -1,56 +1,45 @@
 import logging
-import socket
+import eventlet
+import socketio
 import provaIMU as IMU
 import numpy as np
 import sys
 import json
 
-logging.basicConfig(level=logging.DEBUG, format='(%(threadName)-9s) %(message)s',)
+#logging.basicConfig(level=logging.DEBUG, format='(%(threadName)-9s) %(message)s',)
 
 s = None
 
-def server():        
-    '''Start server '''
-    global s
-    logging.debug('SERVER starting')
-    host = socket.gethostname()   # get local socket address
-    port = 8080  # Make sure it's within the > 1024 $$ <65535 range
-    addr = str(host) + ":" + str(port) 
+sio = socketio.Server()
+app = socketio.WSGIApp(sio)
 
-    s = socket.socket() #BSD socket,  type=SOCK_STREAM, AF_INET address family
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((host, port))    
+@sio.event
+def connect(sid, environ):
+    print('connect ', sid)
+
+@sio.event
+def disconnect(sid):
+    print('disconnect ', sid)
+
+@sio.on('my_message',namespace='/sensors')
+def my_message(sid,data):
+    print("HO RICEVUTO+++++")
+    sio.emit('my response',{'dati':'sensore'},namespace='/sensors')
     
-    s.listen(1) #nb of connection requests
-    c, adress = s.accept()
-    print("Connection from: " + str(addr))
-#     print("prova11")
-    while True:
-        mssg = c.recv(1024).decode('utf-8')
-        if not mssg:
-            s.close()
-            logging.debug("No more messages")
-            break
-        print('From online user: ' + mssg)    
-        
-        raw_data = IMU.get_buffers()
-        data_js = json.dumps(raw_data.__dict__)
-        IMU.r.clear()
-        
-        c.send(data_js.encode('utf-8')) #send sensor data 
-        print("Done!")
+@sio.on('getIMU_buffer',namespace='/sensors')
+def getIMU_buffer(sid):
+    raw_data = json.dumps(IMU.get_buffers().__dict__)
+    IMU.r.clear()
+    sio.emit('receiveIMU_buffer',raw_data,namespace='/sensors')
 
 if __name__ == '__main__':
     
     ''' Start IMU reading '''
-    IMU.IMU_init()    
-    while True:
-        try:
-            server()
-        except KeyboardInterrupt:
-             s.close()
-             IMU.disconnect()
-             sys.exit(0)
+    IMU.IMU_init()
+    
+    # starting IMU server
+    print("starting IMU server")
+    eventlet.wsgi.server(eventlet.listen(('', 5500)), app)
         
     print("Something went wrong, local server is no longer running!")
         

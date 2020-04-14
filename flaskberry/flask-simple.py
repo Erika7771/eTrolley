@@ -14,7 +14,7 @@ app.config.from_mapping(
     SECRET_KEY='dev'
 )
 
-socketio = SocketIO(app, async_mode=async_mode ,cors_allowed_origins="*")
+websocketio = SocketIO(app, async_mode=async_mode ,cors_allowed_origins="*")
 
 # ensure the instance folder exists
 try:
@@ -36,4 +36,4 @@ app.register_blueprint(Eweb_sockets.bp)
 
 
 if __name__ == "__main__":    
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+    websocketio.run(app, host='0.0.0.0', port=5000, debug=True)

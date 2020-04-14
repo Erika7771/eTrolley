@@ -1,17 +1,24 @@
 import json
-import socket
+import socketio
 import time
 import numpy as np
 import signal
 import sys
-#     
-# def signal_handler(signal, frame):
-#     sys.exit(0)
-host = socket.gethostname()  # get local machine name
-port = 8080  # Make sure it's within the > 1024 $$ <65535 range
 
-   
+sio = socketio.Client()
+
+@sio.event
+def connect():
+    print('connection established')
+
+@sio.event
+def disconnect():
+    print('disconnected from server')
     
+@sio.on('my response')
+def my_response(data):
+    print('grazie per i dati ', data)
+
 def getData():
     
     s = socket.socket()
@@ -27,13 +34,17 @@ def getData():
 
 def closeSocket():
     s.close()
+    
+def getStream(ms=100):
+    ms = ms/1000
+    while True:
+        print("mi daresti i dati pf?")
+        sio.emit('my_message', {'dammi i dati': 'pf'},namespace='/sensors')
+        sio.sleep(ms)
  
 if __name__ == "__main__":
-#signal.signal(signal.SIGINT, signal_handler)
-    while True:
-        try:
-            getData()
-            time.sleep(1)
-            
-        except KeyboardInterrupt:
-            sys.exit(0)
+    try:
+        sio.connect('http://localhost:5500',namespaces=['/sensors'])
+        getStream(2000)
+    except KeyboardInterrupt:
+        sys.exit(0)
