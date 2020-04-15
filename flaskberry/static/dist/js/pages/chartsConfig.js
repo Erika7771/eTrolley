@@ -210,23 +210,126 @@ $(function () {
         options: optStyle
     })
 
-    $('#selectReadings').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-        var latest_value = $('#selectReadings option').eq(clickedIndex).val();
+    $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        var latest_value = $(this).children('option').eq(clickedIndex).val();
         var latest_selection = isSelected;
+        var selectedValues = $(this).val();
+        var allIsSelected = selectedValues.includes("all");
+
         if(latest_value=='all' && latest_selection){
-            $(this).parents('.selectpicker').selectpicker('selectAll');
-        }else if(latest_value=='all' && !latest_selection){
-            $(this).parents('.selectpicker').selectpicker('deselectAll');
+            $(this).selectpicker('selectAll');
+        }else if(latest_value=='all' && latest_selection===false){
+            $(this).selectpicker('deselectAll');
+        }else if(latest_value=='all' && !latest_selection){ //evita di fare due volte il render
+            return;
+        }
+
+        if(latest_value!='all' && allIsSelected){
+            var selectedValues = selectedValues.filter(function(e) { return e !== 'all' })
+            $(this).selectpicker('val', selectedValues);
+            $(this).selectpicker('refresh');
+        }
+
+        if($(this).data("type")=='reading'){
+            renderSelectedGraphs($(this).val());
+        }
+
+    });
+
+    function renderSelectedGraphs(graphs){
+        console.log(graphs);
+        $(".card.sensor").hide();
+        $.each(graphs, function( index, sensorName ) {
+            $(".card.sensor[data-sensor='"+sensorName+"']").show();
+        });
+    }
+
+    $(".readSensors").click(function(){
+        if ($(this).hasClass('running')) {
+
+            stopReading();
+
+            $("#selectReadings").prop('disabled', false);
+            $('#selectReadings').selectpicker('refresh');
+            $(this).removeClass('running');
+            $(this).children('i').removeClass('text-danger').removeClass('fa-stop');
+            $(this).children('i').addClass('text-success').addClass('fa-play');
+            $(this).children('span').html('Start');
+
+        } else {
+
+            //da lanciare i sockets selezionati
+
+            $("#selectReadings").prop('disabled', true);
+            $('#selectReadings').selectpicker('refresh');
+            $(this).addClass('running');
+            $(this).children('i').removeClass('text-success').removeClass('fa-play');
+            $(this).children('i').addClass('text-danger').addClass('fa-stop');
+            $(this).children('span').html('Stop');
         }
     });
 
-    $("#selectReadings").change(function(){
-        //if(){
-        //    .includes("Mango");
-        //    .length
-        //}
-        //console.log($(this).val());
-    });
+    function stopReading(){
+        socket.close();
+    }
+
+    var socketChannelMap = {
+        'IMU_acc': {
+            'channelName':'IMU_data',
+            'chartObjects': {
+                'buff_acc' : IMU12,
+                'buff_vel' : IMUangVel,
+            }
+        },
+        'IMU_vel': {
+            'channelName':'IMU_data',
+            'chartObjects': {
+                'buff_acc' : IMU12,
+                'buff_vel' : IMUangVel,
+            }
+        },
+        'IMU_acc': {
+            'channelName':'RazorIMU_data',
+            'chartObjects': {
+                'buff_acc' : RazorIMU,
+                'buff_vel' : RazorIMUvel,
+            }
+        },
+        'IMU_vel': {
+            'channelName':'RazorIMU_data',
+            'chartObjects': {
+                'buff_acc' : RazorIMU,
+                'buff_vel' : RazorIMUvel,
+            }
+        },
+    }
+
+    function startReading(){
+
+        var startedChannels = [];
+        var selectedSensors = $('#selectReadings').val();
+
+        socket = io(namespace);
+
+        $.each(socketChannelMap, function( sensorName, value) {
+            if(startedChannels.includes(value.channelName)){
+                return;
+            }
+            if(!selectedSensors.includes(sensorName)){
+                return;
+            }
+            startedChannels.push(value.channelName);
+            socket.on(value.channelName, function (response, cb) {
+                response = JSON.parse(response);
+
+                $.each(value.chartObjects, function( responseName, chartObject) {
+                    drawGraph(value.chartObject, response[responseName], false);
+                }
+            });
+        });
+
+    }
+
 
 
 })

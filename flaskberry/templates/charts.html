@@ -37,37 +37,37 @@
              
           <div class="col-md-10">
             <div class="row">
-              
-            <div class="col-sm-12">
-              <label style="width: 145px;" for="selectReadings">Select readings:</label>	
-              <select class="selectpicker" id="selectReadings" multiple>
-                <option value="all" selected="selected">All</option>
-                <option value="IMU_acc">IMU Tinkerforge acc</option>
-                <option value="IMU_vel">IMU Tinkerforge ang vel</option>
-                <option value="SF_acc">IMUSparkFun acc</option>
-                <option value="SF_vel">IMUSparkFun ang vel</option>
-                <option value="Load Cell">Load Cell</option>
-                <option value="CAN">CAN bus</option>
-              </select>
-              <button class="btn btn-light"><i class="fa fa-play-circle text-success"></i> Start</button>
-            </div><!-- /.col -->  
-          
-            <div class="col-sm-12 mt-2">
-                <label style="width: 145px;" for="selectRecordings">Select recordings:</label>
-                <select id="selectRecordings" class="selectpicker" multiple>
+
+              <div class="col-sm-12">
+                <label style="width: 145px;" for="selectReadings">Select readings:</label>
+                <select class="selectpicker" id="selectReadings" multiple data-type="reading">
                   <option value="all" selected>All</option>
+                  <option value="IMU_acc" selected>IMU Tinkerforge acc</option>
+                  <option value="IMU_vel" selected>IMU Tinkerforge ang vel</option>
+                  <option value="Razor_acc" selected>IMUSparkFun acc</option>
+                  <option value="Razor_vel" selected>IMUSparkFun ang vel</option>
+                  <option value="Load Cell" selected>Load Cell</option>
+                  <option value="CAN" selected>CAN bus</option>
+                </select>
+                <button class="btn btn-light readSensors"><i class="fa fa-play-circle text-success"></i> <span>Start</span></button>
+              </div><!-- /.col -->
+
+              <div class="col-sm-12 mt-2">
+                <label style="width: 145px;" for="selectRecordings">Select recordings:</label>
+                <select id="selectRecordings" class="selectpicker" multiple data-type="recording">
+                  <option value="all">All</option>
                   <option value="IMU_acc">IMU Tinkerforge acc</option>
                   <option value="IMU_vel">IMU Tinkerforge ang vel</option>
-                  <option value="SF_acc">IMUSparkFun acc</option>
-                  <option value="SF_vel">IMUSparkFun ang vel</option>
+                  <option value="Razor_acc">IMUSparkFun acc</option>
+                  <option value="Razor_vel">IMUSparkFun ang vel</option>
                   <option value="Load Cell">Load Cell</option>
                   <option value="CAN">CAN bus</option>
                 </select>
-                <button class="btn btn-light"><i class="fa fa-play-circle text-success"></i> Start</button>
-          		</div>
-            </div> 
-            
-            
+                <button class="btn btn-light"><i class="fa fa-play-circle text-success"></i> <span>Start</span></button>
+              </div>
+            </div>
+
+
           </div>   
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -79,7 +79,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-lg-6">
-            <div class="card">  
+            <div class="card sensor" data-sensor="IMU_acc">
               <div class="card-body">
                 <div class="d-flex">
                   <p>
@@ -114,7 +114,7 @@
             </script>
             
             <!-- /.card -->
-            <div class="card">
+            <div class="card sensor" data-sensor="IMU_vel">
               <div class="card-body">
                 <div class="d-flex">
                   <p class="d-flex flex-column">
@@ -145,7 +145,7 @@
           </div>  
 
           <div class="col-lg-6">
-            <div class="card">  
+            <div class="card sensor" data-sensor="Razor_acc">
               <div class="card-body">
                 <div class="d-flex">
                   <p>                
@@ -173,7 +173,7 @@
               </div>
             </div>
             <!-- /.card -->
-            <div class="card">
+            <div class="card sensor" data-sensor="Razor_vel">
               <div class="card-body">
                 <div class="d-flex">
                   <p class="d-flex flex-column">
@@ -203,7 +203,7 @@
           </div>		  
 		  
 		  <div class="col-lg-6">
-            <div class="card">  
+            <div class="card sensor" data-sensor="CAN">
               <div class="card-body">
                 <div class="d-flex">
                   <p class="d-flex flex-column">
@@ -227,7 +227,7 @@
           </div>
           <!-- /.col-md-6 -->
           <div class="col-lg-6">
-            <div class="card">
+            <div class="card sensor" data-sensor="Load Cell">
               <div class="card-body">
                 <div class="d-flex">
                   <p class="d-flex flex-column">
