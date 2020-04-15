@@ -40,12 +40,10 @@ $(function () {
     }
   });
 
-
   var zero = 0;
   var readyToRequest = true;
 
-  function drawGraph(graph,newData,checkReady){
-    
+  function drawGraph(graph,newData,checkReady){    
     var i;
     var j;
     var tooLong = graph.data.datasets[0].data.length > 300;
@@ -53,60 +51,48 @@ $(function () {
     for(i = 0; i < newData.length; i++){
       graph.data.labels.push(zero);
       if(tooLong){
-    graph.data.labels.splice(0, 1);
+        graph.data.labels.splice(0, 1);
       }
       for (j = 0; j < graph.data.datasets.length; j++) {
-    if(tooLong){
-      graph.data.datasets[j].data.splice(0, 1);
-    }
-    graph.data.datasets[j].data.push(newData[i][j]); 
-      }
-      
+        if(tooLong){
+          graph.data.datasets[j].data.splice(0, 1);
+        }
+        graph.data.datasets[j].data.push(newData[i][j]); 
+      }      
       zero++;
     }
-
     graph.update();
-  }
-  
-  
+  }  
 
   var $IMU12 = $('#IMU12');
   var IMU12  = new Chart($IMU12, {
-    data   : {
-      labels  : ['1', '2', '3', '4', '5', '6', '7'],
+    type: 'line',
+    backgroundColor: 'transparent',
+    data: {
+      //labels  : ['1', '2', '3', '4', '5', '6', '7'],
       datasets: [{
-    type                : 'line',
-    data                : [10, 12, 17, 26, 18, 15, 16],
-    backgroundColor     : 'transparent',
-    borderColor         : '#6BC1FF',
-    pointBorderColor    : '#6BC1FF',
-    pointBackgroundColor: '#6BC1FF',
-    fill                : false
-    // pointHoverBackgroundColor: '#6BC1FF',
-    // pointHoverBorderColor    : '#6BC1FF'
+        type                : 'line',
+        data                : [10, 12, 17, 26, 18, 15, 16],
+        
+        borderColor         : '#6BC1FF',
+        pointBorderColor    : '#6BC1FF',
+        pointBackgroundColor: '#6BC1FF',
+        fill                : false
       },
-        {
-          type                : 'line',
-          data                : [30, 80, 310, 97, 80, 33, 100],
-          backgroundColor     : 'tansparent',
-          borderColor         : '#52FF89',
-          pointBorderColor    : '#52FF89',
-          pointBackgroundColor: '#52FF89',
-          fill                : false
-          // pointHoverBackgroundColor: '#52FF89',
-          // pointHoverBorderColor    : '#52FF89'
-        },
-        {
-          type                : 'line',
-          data                : [34, 262, 73, 59, 30, 20, 80],
-          backgroundColor     : 'tansparent',
-          borderColor         : '#FF7A78',
-          pointBorderColor    : '#FF7A78',
-          pointBackgroundColor: '#FF7A78',
-          fill                : false
-          // pointHoverBackgroundColor: '#FF7A78',
-          // pointHoverBorderColor    : '#FF7A78'
-        }]
+      {        
+        data                : [30, 80, 310, 97, 80, 33, 100],
+        borderColor         : '#52FF89',
+        pointBorderColor    : '#52FF89',
+        pointBackgroundColor: '#52FF89',
+        fill                : false
+      },
+      {
+        data                : [34, 262, 73, 59, 30, 20, 80],
+        borderColor         : '#FF7A78',
+        pointBorderColor    : '#FF7A78',
+        pointBackgroundColor: '#FF7A78',
+        fill                : false
+      }]
     },
     options: {
       //elements:{
@@ -114,23 +100,23 @@ $(function () {
       //tension:0
     //}
       //},
-      animation : false,
+      animation: false,
       maintainAspectRatio: false,
-      tooltips           : {
+      tooltips: {
         enable: false
       },
-      hover              : {
-        mode     : null
+      hover: {
+        mode: null
       },
-      legend             : {
+      legend: {
         display: false
       },
       elements: {
-    point: {
-      radius: 0
-    }
+        point: {
+          radius: 0
+        }
       },
-      scales             : {
+      scales: {
         yAxes: [{
           // display: false,
           gridLines: {
@@ -138,15 +124,15 @@ $(function () {
           },
           ticks    : $.extend({
             beginAtZero : true,
-            suggestedMax: 200
+            suggestedMax: 1000
           }, ticksStyle)
         }],
-        xAxes: [{
+        xAxes: [{          
           display: true,
-        scaleLabel: {
-          display: true,
-          labelString: "Time",
-        },
+          scaleLabel: {
+            display: true,
+            labelString: "Time",
+          },
           gridLines: {
             display: true
           },
@@ -154,16 +140,7 @@ $(function () {
         }]
       }
     }
-  })
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  })  
   
   
   var $IMUangVel = $('#IMUangVel')
@@ -178,8 +155,6 @@ $(function () {
     pointBorderColor    : '#6BC1FF',
     pointBackgroundColor: '#6BC1FF',
     fill                : false
-    // pointHoverBackgroundColor: '#6BC1FF',
-    // pointHoverBorderColor    : '#6BC1FF'
       },
         {
           type                : 'line',
@@ -189,8 +164,6 @@ $(function () {
           pointBorderColor    : '#52FF89',
           pointBackgroundColor: '#52FF89',
           fill                : false
-          // pointHoverBackgroundColor: '#52FF89',
-          // pointHoverBorderColor    : '#52FF89'
         },
         {
           type                : 'line',
@@ -200,8 +173,6 @@ $(function () {
           pointBorderColor    : '#FF7A78',
           pointBackgroundColor: '#FF7A78',
           fill                : false
-          // pointHoverBackgroundColor: '#FF7A78',
-          // pointHoverBorderColor    : '#FF7A78'
         }]
     },
     options: {
@@ -264,8 +235,6 @@ $(function () {
         pointBorderColor    : '#6BC1FF',
         pointBackgroundColor: '#6BC1FF',
         fill                : false
-        // pointHoverBackgroundColor: '#6BC1FF',
-        // pointHoverBorderColor    : '#6BC1FF'
       },
         {
           type                : 'line',
@@ -275,8 +244,6 @@ $(function () {
           pointBorderColor    : '#52FF89',
           pointBackgroundColor: '#52FF89',
           fill                : false
-          // pointHoverBackgroundColor: '#52FF89',
-          // pointHoverBorderColor    : '#52FF89'
         },
         {
           type                : 'line',
@@ -286,8 +253,6 @@ $(function () {
           pointBorderColor    : '#FF7A78',
           pointBackgroundColor: '#FF7A78',
           fill                : false
-          // pointHoverBackgroundColor: '#FF7A78',
-          // pointHoverBorderColor    : '#FF7A78'
         }]
     },
     options: {
@@ -346,8 +311,6 @@ $(function () {
         pointBorderColor    : '#6BC1FF',
         pointBackgroundColor: '#6BC1FF',
         fill                : false
-        // pointHoverBackgroundColor: '#6BC1FF',
-        // pointHoverBorderColor    : '#6BC1FF'
       },
         {
           type                : 'line',
@@ -357,8 +320,6 @@ $(function () {
           pointBorderColor    : '#52FF89',
           pointBackgroundColor: '#52FF89',
           fill                : false
-          // pointHoverBackgroundColor: '#52FF89',
-          // pointHoverBorderColor    : '#52FF89'
         },
         {
           type                : 'line',
@@ -368,8 +329,6 @@ $(function () {
           pointBorderColor    : '#FF7A78',
           pointBackgroundColor: '#FF7A78',
           fill                : false
-          // pointHoverBackgroundColor: '#FF7A78',
-          // pointHoverBorderColor    : '#FF7A78'
         }]
     },
     options: {
@@ -428,8 +387,6 @@ $(function () {
         pointBorderColor    : '#6BC1FF',
         pointBackgroundColor: '#6BC1FF',
         fill                : false
-        // pointHoverBackgroundColor: '#6BC1FF',
-        // pointHoverBorderColor    : '#6BC1FF'
       }]
     },
     options: {
