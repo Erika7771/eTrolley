@@ -26,18 +26,13 @@ $(function () {
             }]
         }
     }
-
-    $(".reloadIMU12").click(function () {
-        updateIMU12();
-    });
-
+    
 
     var timer;
 
     var namespace = '/sensors';
     var socket = io(namespace);
     socket.close();
-
 
     $(".monitorIMU12").click(function () {
 
@@ -51,6 +46,24 @@ $(function () {
                 response = JSON.parse(response);
                 drawGraph(IMU12, response.buff_acc, false);
                 drawGraph(IMUangVel, response.buff_vel, true);
+            });
+            $(this).addClass('running');
+            $(this).addClass('text-warning');
+        }
+    });
+    
+    $(".monitorRazorIMU").click(function () {
+
+        if ($(this).hasClass('running')) {
+            socket.close();
+            $(this).removeClass('running');
+            $(this).removeClass('text-warning');
+        } else {
+            socket = io(namespace);
+            socket.on('RazorIMU_data', function (response, cb) {
+                response = JSON.parse(response);
+                drawGraph(RazorIMU, response.buff_acc, false);
+                drawGraph(RazorIMUvel, response.buff_vel, true);
             });
             $(this).addClass('running');
             $(this).addClass('text-warning');
@@ -131,8 +144,8 @@ $(function () {
         options: optStyle
     })
 
-    var $IMUsf = $('#IMUsf');
-    var IMUsf = new Chart($IMUsf, {
+    var $RazorIMU = $('#RazorIMU');
+    var RazorIMU = new Chart($RazorIMU, {
         type: 'line',
         data: {
             datasets: [{
@@ -149,10 +162,11 @@ $(function () {
                 }]
         },
         options: optStyle
+        
     })
 
-    var $IMUsfvel = $('#IMUsfvel')
-    var IMUsfvel = new Chart($IMUsfvel, {
+    var $RazorIMUvel = $('#RazorIMUvel')
+    var RazorIMUvel = new Chart($RazorIMUvel, {
         type: 'line',
         data: {
             datasets: [{
