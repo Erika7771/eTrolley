@@ -32,8 +32,7 @@
         <div class="row mb-2">
           <div class="col-md-2">
             <h1 class="m-0 text-dark">Sensors Readings</h1>
-            <p>Start all: <b><span id="ping-pong"></span>ms</b></p><!--
-            <button class="btn btn-block btn-warning" onclick="ciao();">suki?</button>-->
+            <p>Start all: <b><span id="ping-pong"></span>ms</b></p>
           </div><!-- /.col -->  
              
           <div class="col-md-10">
@@ -149,14 +148,15 @@
             <div class="card">  
               <div class="card-body">
                 <div class="d-flex">
-                  <p class="d-flex flex-column">
-                    <span class="text-bold text-lg">IMU SparkFun Acceleration</span>
+                  <p>                
+                    <span class="text-bold text-lg">Razor IMU Acceleration</span>
+                    <i class="fa fa-tachometer-alt monitorRazorIMU ml-2" style="cursor: pointer;"></i>
                   </p>
                 </div>
                 <!-- /.d-flex -->
 
                 <div class="position-relative mb-4">
-                  <canvas id="IMUsf" height="200"></canvas>
+                  <canvas id="RazorIMU" height="200"></canvas>
                 </div>
 
                 <div class="d-flex flex-row justify-content-end">
@@ -183,7 +183,7 @@
                 <!-- /.d-flex -->
 
                 <div class="position-relative mb-4">
-                  <canvas id="IMUsfvel" height="200"></canvas>
+                  <canvas id="RazorIMUvel" height="200"></canvas>
                 </div>
 
                 <div class="d-flex flex-row justify-content-end">
