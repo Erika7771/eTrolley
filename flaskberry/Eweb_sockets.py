@@ -17,12 +17,12 @@ from __main__ import websocketio, app
 bp = Blueprint('web_sockets', __name__)
 
 IMU_data = None
+RazorIMU_data = None
 
 ####### LOCAL SOCKETS #######
 
 sio = socketio.Client()
 sio.connect('http://localhost:5500',namespaces=['/sensors'])
-
 
 @sio.event
 def connect():
@@ -33,23 +33,25 @@ def disconnect():
     print('disconnected from server')
 
 
-
-
 ####### WEB SOCKETS #######
 
 thread = None
 thread_lock = Lock()
 
 connectedWebClients = 0
-
     
 def IMUCallback(data):
     global IMU_data
     IMU_data = data
 
+def RazorIMUCallback(data):
+    global RazorIMU_data
+    RazorIMU_data = data
+
 def getStream(ms=100):
     
     global IMU_data
+    global RazorIMU_data
     
     print("STREAM STARTED")
     
@@ -58,6 +60,9 @@ def getStream(ms=100):
         websocketio.sleep(ms)
         sio.emit('getIMU_buffer', '', namespace='/sensors',callback=IMUCallback)
         websocketio.emit('IMU_data',IMU_data,namespace='/sensors')
+        
+        sio.emit('getRazorIMU_buffer', '', namespace='/sensors',callback=RazorIMUCallback)
+        websocketio.emit('RazorIMU_data',RazorIMU_data,namespace='/sensors')
 
 
 @bp.route('/')

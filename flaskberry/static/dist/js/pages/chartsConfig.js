@@ -237,7 +237,6 @@ $(function () {
     });
 
     function renderSelectedGraphs(graphs){
-        console.log(graphs);
         $(".card.sensor").hide();
         $.each(graphs, function( index, sensorName ) {
             $(".card.sensor[data-sensor='"+sensorName+"']").show();
@@ -258,7 +257,7 @@ $(function () {
 
         } else {
 
-            //da lanciare i sockets selezionati
+            startReading()
 
             $("#selectReadings").prop('disabled', true);
             $('#selectReadings').selectpicker('refresh');
@@ -288,14 +287,14 @@ $(function () {
                 'buff_vel' : IMUangVel,
             }
         },
-        'IMU_acc': {
+        'Razor_acc': {
             'channelName':'RazorIMU_data',
             'chartObjects': {
                 'buff_acc' : RazorIMU,
                 'buff_vel' : RazorIMUvel,
             }
         },
-        'IMU_vel': {
+        'Razor_vel': {
             'channelName':'RazorIMU_data',
             'chartObjects': {
                 'buff_acc' : RazorIMU,
@@ -319,15 +318,18 @@ $(function () {
                 return;
             }
             startedChannels.push(value.channelName);
-            socket.on(value.channelName, function (response, cb) {
+            socket.on(value.channelName, function (response) {
                 response = JSON.parse(response);
-
-                $.each(value.chartObjects, function( responseName, chartObject) {
-                    drawGraph(value.chartObject, response[responseName], false);
-                }
+                updateResponse(value.chartObjects,response);
             });
         });
 
+    }
+    
+    function updateResponse(chartObjects, response){
+      $.each(chartObjects, function( responseName, chartObject) {
+        drawGraph(chartObject, response[responseName], false);
+      });
     }
 
 

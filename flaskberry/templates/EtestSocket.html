@@ -23,20 +23,15 @@
             // server is established.
             socket.on('connect', function() {
                 socket.emit('my_event', {data: 'I\'m connected!'});
-            });
+            });            
             
-            
-            socket.on('IMU_data', function(msg, cb) {
+            socket.on('IMU_data', function(msg) {
                 $('#log').html("<br/>"+msg);
-                if (cb)
-                    cb();
             });
-            
-            socket.on('CANALEEEEEE', function(msg, cb) {
-                $('#log').append("<br/>"+msg);
-                if (cb)
-                    cb();
-            });
+            socket.on('RazorIMU_data', function(msg) {
+                $('#log2').html("<br/>"+msg);
+            });            
+           
 
             // Interval function that tests message latency by sending a "ping"
             // message. The server then responds with a "pong" message and the
@@ -81,6 +76,7 @@
     </form>
     <h2>Receive:</h2>
     <div id="log"></div>
+    <div id="log2"></div>
 </body>
 </html>
 

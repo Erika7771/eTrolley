@@ -2,6 +2,7 @@ import logging
 import eventlet
 import socketio
 import provaIMU as IMU
+import Razor_IMU 
 import numpy as np
 import sys
 import json
@@ -25,6 +26,12 @@ def disconnect(sid):
 def getIMU_buffer(sid,data):
     raw_data = json.dumps(IMU.get_buffers().__dict__)
     IMU.r.clear()
+    return raw_data
+
+@sio.on('getRazorIMU_buffer',namespace='/sensors')
+def getIMU_buffer(sid,data):
+    raw_data = json.dumps(Razor_IMU.get_buffers().__dict__)
+    Razor_IMU.r.clear()
     return raw_data
 
 if __name__ == '__main__':
