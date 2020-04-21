@@ -9,6 +9,7 @@ UID = "5VHux5" # Unique ID of IMU Brick
 import time
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.brick_imu import BrickIMU
+import writeToCSV as CSV
 
 class Reading:    
     def __init__(self):
@@ -20,15 +21,30 @@ class Reading:
         self.buff_vel.clear()        
 
 r = Reading()
+
 ipcon = None
 
+csvfile_acc = None
+csvfile_vel = None
+
 def cb_acceleration(x,y,z):    
+    global csvfile_acc
+    
+    if csvfile_acc:
+        CSV.write_file(csvfile_acc, 'IMU_acc', [x,y,z])
+            
     if len(r.buff_vel) > 50 or len(r.buff_acc) > 50:
             r.clear()       
     r.buff_acc.append([x,y,z])
     
-def cb_angular_velocity(x,y,z):   
-    r.buff_vel.append([x,y,z])
+    
+def cb_angular_velocity(x,y,z):
+    global csvfile_vel
+     
+    if csvfile_vel:
+        CSV.write_file(csvfile_vel,'IMU_vel', [x,y,z])
+    
+    r.buff_vel.append([x,y,z])    
     
 def IMU_init():
     global ipcon
@@ -46,6 +62,24 @@ def IMU_init():
     
 def get_buffers():
     return r
+
+def record(sensor):
+    global csvfile_acc
+    global csvfile_vel
+    
+    if sensor == 'IMU_acc':
+        csvfile_acc = CSV.create_file(sensor)
+    elif  sensor == 'IMU_vel':
+        csvfile_vel = CSV.create_file(sensor)
+        
+def record_stop(dataID):
+    global csvfile_acc
+    global csvfile_vel
+    
+    if dataID == 'IMU_acc':
+        csvfile_acc = None
+    elif  dataID == 'IMU_vel':
+        csvfile_vel = None
     
 def disconnect():
     global ipcon

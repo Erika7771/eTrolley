@@ -6,11 +6,9 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function() {
-            // Use a "/test" namespace.
             // An application can open a connection on multiple namespaces, and
             // Socket.IO will multiplex all those connections on a single
-            // physical channel. If you don't care about multiple channels, you
-            // can set the namespace to an empty string.
+            // physical channel
             namespace = '/sensors';
 
             // Connect to the Socket.IO server.
@@ -30,7 +28,11 @@
             });
             socket.on('RazorIMU_data', function(msg) {
                 $('#log2').html("<br/>"+msg);
-            });            
+            });   
+            socket.on('LoadCell_data', function(msg) {
+                $('#log3').html("<br/>"+msg);
+            });    
+                     
            
 
             // Interval function that tests message latency by sending a "ping"
@@ -77,6 +79,7 @@
     <h2>Receive:</h2>
     <div id="log"></div>
     <div id="log2"></div>
+    <div id="log3"></div>
 </body>
 </html>
 

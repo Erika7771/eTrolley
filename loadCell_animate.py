@@ -47,3 +47,4 @@ def animate(i,read):
 ani = animation.FuncAnimation(fig, animate,fargs=(read,), interval=30, blit=True)
 
 plt.show() 
+

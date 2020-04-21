@@ -1,7 +1,0 @@
-buoni link per i socket e i threads:
-
-https://medium.com/podiihq/networking-how-to-communicate-between-two-python-programs-abd58b97390a
-
-https://www.bogotobogo.com/python/Multithread/python_multithreading_Event_Objects_between_Threads.php
-https://www.geeksforgeeks.org/socket-programming-multi-threading-python/
-http://net-informations.com/python/net/thread.htm

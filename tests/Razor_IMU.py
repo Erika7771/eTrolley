@@ -5,6 +5,8 @@ from datetime import datetime
 import threading, time
 import sys
 import numpy as np
+import json
+import writeToCSV as CSV
 
 class Reading:    
     def __init__(self):
@@ -13,57 +15,71 @@ class Reading:
     
     def clear(self):
         self.buff_acc.clear()
-        self.buff_vel.clear()        
-
+        self.buff_vel.clear()
+        
 r = Reading()
-Razor_IMU = FaBo9Axis_MPU9250.MPU9250()
+Razor_IMU = None
+csvfile_acc = None
+csvfile_vel = None
 
-
-
-def read():  
-  while True: # ~2ms per loop
+def read():
+  global csvfile_acc
+  global Razor_IMU
+  
+  while True: # ~2ms per loop       
+      
     if len(r.buff_vel) > 50 or len(r.buff_acc) > 50:
         r.clear()
     data_acc = Razor_IMU.readAccel()       
     data_vel = Razor_IMU.readGyro()
     r.buff_acc.append(list(data_acc.values()))
     r.buff_vel.append(list(data_vel.values()))
-    time.sleep(0.008)     
+    
+    if csvfile_acc:
+        CSV.write_file(csvfile_acc, 'Razor_acc', data_acc.values())
+    if csvfile_vel:
+        CSV.write_file(csvfile_vel, 'Razor_vel', data_vel.values())  
+    
+    time.sleep(0.01)     
+
+def init():
+    global Razor_IMU
+    Razor_IMU = FaBo9Axis_MPU9250.MPU9250()
+    print("Hey, Razor connected!")
+    # Start background process 
+    t_read = threading.Thread(target=read)
+    # t_read.daemon = True
+    t_read.start()
+
+
+
       
 def get_buffers():
     return r
 
-# Start background process 
-t_read = threading.Thread(target=read)
-# t_read.daemon = True
-t_read.start()
 
-# 
-# def Razor_IMU_init():
+
+def record(sensor):
+    global csvfile_acc
+    global csvfile_vel
     
-
-# sif __name__ == "__main__":
-# try:        
-#     
-#     #Razor_IMU_init()       
-#     while True:
-#         data = get_buffers()
-#         print(f"size of buff_vel: {len(data.buff_vel)}")
-#         print(" ay = " , ( accel['y'] ))
-#         print(" az = " , ( accel['z'] ))
-
+    if sensor == 'Razor_acc':
+        csvfile_acc = CSV.create_file(sensor)
+    elif  sensor == 'Razor_vel':
+        csvfile_vel = CSV.create_file(sensor)
         
-#         print(" gx = " , ( gyro['x'] ))
-#         print(" gy = " , ( gyro['y'] ))
-#         print(" gz = " , ( gyro['z'] ))
+def record_stop(sensors):
+    global csvfile_acc
+    global csvfile_vel
+    
+    if sensors == 'Razor_acc':
+        csvfile_acc = None
+    elif  sensors == 'Razor_vel':
+        csvfile_vel = None
 
-#         mag = mpu9250.readMagnet()
-#         print(" mx = " , ( mag['x'] ))
-#         print(" my = " , ( mag['y'] ))
-#         print(" mz = " , ( mag['z'] ))
-#         print("Hola")
-
-#         time.sleep(1)
-
-# except KeyboardInterrupt:
-#     sys.exit()
+if __name__ == "__main__":
+    while True:
+        time.sleep(1)        
+        val = get_buffers()
+        print(json.dumps(val.__dict__))
+        

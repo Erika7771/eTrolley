@@ -1,3 +1,23 @@
+function interpolateArray(data, fitCount) {
+    
+    var linearInterpolate = function (before, after, atPoint) {
+        return before + (after - before) * atPoint;
+    };
+    
+	var newData = new Array();
+	var springFactor = new Number((data.length - 1) / (fitCount - 1));
+	newData[0] = data[0]; // for new allocation
+	for ( var i = 1; i < fitCount - 1; i++) {
+		var tmp = i * springFactor;
+		var before = new Number(Math.floor(tmp)).toFixed();
+		var after = new Number(Math.ceil(tmp)).toFixed();
+		var atPoint = tmp - before;
+		newData[i] = linearInterpolate(data[before], data[after], atPoint);
+		}
+	newData[fitCount - 1] = data[data.length - 1]; // for new allocation
+	return newData;
+};
+
 $(function () {
     'use strict'
 
@@ -27,48 +47,78 @@ $(function () {
         }
     }
     
+    var optStyle2 = {
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                gridLines: {
+                    display: true
+                },
+                ticks: $.extend({
+                    beginAtZero: true,
+                    suggestedMax: 3
+                }, ticksStyle)
+            }],
+            xAxes: [{
+                display: false,
+                scaleLabel: {
+                    display: false
+                },
+                ticks: ticksStyle
+            }]
+        }
+    }
+     var optStyle3 = {
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                gridLines: {
+                    display: true
+                },
+                ticks: $.extend({
+                    beginAtZero: true,
+                    suggestedMax: 300
+                }, ticksStyle)
+            }],
+            xAxes: [{
+                display: false,
+                scaleLabel: {
+                    display: false
+                },
+                ticks: ticksStyle
+            }]
+        }
+    }
+    
+     var optStyle4 = {
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                gridLines: {
+                    display: true
+                },
+                ticks: $.extend({
+                    beginAtZero: true,
+                    suggestedMax : 10000
+                }, ticksStyle)
+            }],
+            xAxes: [{
+                display: false,
+                scaleLabel: {
+                    display: false
+                },
+                ticks: ticksStyle
+            }]
+        }
+    }
+    
+    
 
     var timer;
 
     var namespace = '/sensors';
     var socket = io(namespace);
     socket.close();
-
-    $(".monitorIMU12").click(function () {
-
-        if ($(this).hasClass('running')) {
-            socket.close();
-            $(this).removeClass('running');
-            $(this).removeClass('text-warning');
-        } else {
-            socket = io(namespace);
-            socket.on('IMU_data', function (response, cb) {
-                response = JSON.parse(response);
-                drawGraph(IMU12, response.buff_acc, false);
-                drawGraph(IMUangVel, response.buff_vel, true);
-            });
-            $(this).addClass('running');
-            $(this).addClass('text-warning');
-        }
-    });
-    
-    $(".monitorRazorIMU").click(function () {
-
-        if ($(this).hasClass('running')) {
-            socket.close();
-            $(this).removeClass('running');
-            $(this).removeClass('text-warning');
-        } else {
-            socket = io(namespace);
-            socket.on('RazorIMU_data', function (response, cb) {
-                response = JSON.parse(response);
-                drawGraph(RazorIMU, response.buff_acc, false);
-                drawGraph(RazorIMUvel, response.buff_vel, true);
-            });
-            $(this).addClass('running');
-            $(this).addClass('text-warning');
-        }
-    });
 
     var zero = 0;
     var readyToRequest = true;
@@ -161,7 +211,8 @@ $(function () {
                     borderColor: '#FF7A78'
                 }]
         },
-        options: optStyle
+        
+        options: optStyle2
         
     })
 
@@ -182,20 +233,19 @@ $(function () {
                     borderColor: '#FF7A78'
                 }]
         },
-        options: optStyle
+        options: optStyle3
     })
 
-    var $loadCell = $('#loadCell')
-    var loadCell = new Chart($loadCell, {
+    var $LoadCell = $('#LoadCell')
+    var LoadCell = new Chart($LoadCell, {
         type: 'line',
         data: {
-            labels: [],
             datasets: [{
                 data: [],
                 borderColor: '#6BC1FF'
             }]
         },
-        options: optStyle
+        options: optStyle4
     })
 
     var $Arduino = $('#Arduino')
@@ -209,7 +259,7 @@ $(function () {
         },
         options: optStyle
     })
-
+        //This event fires after the select's value has been changed.
     $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
         var latest_value = $(this).children('option').eq(clickedIndex).val();
         var latest_selection = isSelected;
@@ -233,23 +283,44 @@ $(function () {
         if($(this).data("type")=='reading'){
             renderSelectedGraphs($(this).val());
         }
+        
+        if($(this).data("type")=='recording'){
+            var sensorsToken = $('#selectRecordings').val().join(';');
+            $("#downlaodFiles").attr("href","/recordings/last_recording?data="+sensorsToken+"&rnd="+Math.random());
+        }
 
     });
 
     function renderSelectedGraphs(graphs){
-        $(".card.sensor").hide();
-        $.each(graphs, function( index, sensorName ) {
-            $(".card.sensor[data-sensor='"+sensorName+"']").show();
+        var renderer = this;
+        var howMany = graphs.length;
+        $(".card.sensor").parents(".sensorColumn").hide();
+        $.each(graphs, function( index, sensorName) {
+            var $el = $(".card.sensor[data-sensor='"+sensorName+"']").parents(".sensorColumn");
+            $el.show();
+            if(howMany < 2){
+                $el.removeClass("col-lg-6").addClass("col-md-12");
+            }else{
+                $el.addClass("col-lg-6").removeClass("col-md-12");
+            }
         });
     }
 
-    $(".readSensors").click(function(){
+    $(".readSensors, .recordSensors").click(function(){
+        
+        var reading = $(this).hasClass("readSensors");
+        var idPicker = reading?'#selectReadings':"#selectRecordings";
+        
         if ($(this).hasClass('running')) {
 
-            stopReading();
+            if(reading){
+                stopReading();
+            }else{
+                Recording('stop');
+            }
 
-            $("#selectReadings").prop('disabled', false);
-            $('#selectReadings').selectpicker('refresh');
+            $(idPicker).prop('disabled', false);
+            $(idPicker).selectpicker('refresh');
             $(this).removeClass('running');
             $(this).children('i').removeClass('text-danger').removeClass('fa-stop');
             $(this).children('i').addClass('text-success').addClass('fa-play');
@@ -257,10 +328,14 @@ $(function () {
 
         } else {
 
-            startReading()
+            if(reading){
+                startReading();
+            }else{
+                Recording('start');
+            }
 
-            $("#selectReadings").prop('disabled', true);
-            $('#selectReadings').selectpicker('refresh');
+            $(idPicker).prop('disabled', true);
+            $(idPicker).selectpicker('refresh');
             $(this).addClass('running');
             $(this).children('i').removeClass('text-success').removeClass('fa-play');
             $(this).children('i').addClass('text-danger').addClass('fa-stop');
@@ -278,7 +353,8 @@ $(function () {
             'chartObjects': {
                 'buff_acc' : IMU12,
                 'buff_vel' : IMUangVel,
-            }
+            },
+            'leader':true
         },
         'IMU_vel': {
             'channelName':'IMU_data',
@@ -301,13 +377,19 @@ $(function () {
                 'buff_vel' : RazorIMUvel,
             }
         },
+        'Load_Cell': {
+            'channelName':'LoadCell_data',
+            'chartObjects': {
+                'data' : LoadCell
+            }
+        },
     }
 
     function startReading(){
 
         var startedChannels = [];
         var selectedSensors = $('#selectReadings').val();
-
+        
         socket = io(namespace);
 
         $.each(socketChannelMap, function( sensorName, value) {
@@ -319,12 +401,22 @@ $(function () {
             }
             startedChannels.push(value.channelName);
             socket.on(value.channelName, function (response) {
-                response = JSON.parse(response);
-                updateResponse(value.chartObjects,response);
+                if(response){
+                    response = JSON.parse(response);
+                    updateResponse(value.chartObjects,response);
+                }
             });
         });
 
     }
+    
+    function Recording(action){
+        var startedChannels = [];
+        var selectedSensors = $('#selectRecordings').val();
+        
+        socket.emit('record',[action, selectedSensors])
+    }
+    
     
     function updateResponse(chartObjects, response){
       $.each(chartObjects, function( responseName, chartObject) {
