@@ -1,7 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Flask-SocketIO Test</title>
+    <link rel="icon" href="/static/favicon.ico">
+    <title>Flask-SocketIO Raw Data</title>
     <script src="//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
@@ -24,17 +25,18 @@
             });            
             
             socket.on('IMU_data', function(msg) {
-                $('#log').html("<br/>"+msg);
+                $('#log').html(msg);
             });
             socket.on('RazorIMU_data', function(msg) {
-                $('#log2').html("<br/>"+msg);
+                $('#log2').html(msg);
             });   
             socket.on('LoadCell_data', function(msg) {
-                $('#log3').html("<br/>"+msg);
-            });    
-                     
-           
-
+                $('#log3').html(msg);
+            });   
+            socket.on('CAN_data', function(msg) {
+                $('#log4').html(msg);
+            });
+            
             // Interval function that tests message latency by sending a "ping"
             // message. The server then responds with a "pong" message and the
             // round trip time is measured.
@@ -56,30 +58,37 @@
                 for (var i = 0; i < ping_pong_times.length; i++)
                     sum += ping_pong_times[i];
                 $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
+                });
             });
-
-            // Handlers for the different forms in the page.
-            // These accept data from the user and send it to the server in a
-            // variety of ways
-            $('form#emit').submit(function(event) {
-                socket.emit('my_event', {data: $('#emit_data').val()});
-                return false;
-            });
-        });
     </script>
+    <style>
+        h4{ margin-bottom: 0;
+        }        
+        div div p{ margin:0;
+        }
+        div{ margin:2rem;
+        }
+    </style>    
 </head>
 <body>
-    <h1>Flask-SocketIO Test</h1>
+   <div>
+    <h1>Flask-SocketIO Raw Data</h1>
     <p>Async mode is: <b>{{ async_mode }}</b></p>
     <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
-    <form id="emit" method="POST" action='#'>
-        <input type="text" name="emit_data" id="emit_data" placeholder="Message">
-        <input type="submit" value="Echo">
-    </form>
-    <h2>Receive:</h2>
-    <div id="log"></div>
-    <div id="log2"></div>
-    <div id="log3"></div>
+    <h2>Received data:</h2>
+        <div><h4>IMU:</h4>
+            <p id="log"></p>
+        </div>
+        <div><h4>Razor IMU:</h4> 
+            <p id="log2"></p>
+        </div>
+        <div><h4>Load Cell:</h4> 
+            <p id="log3"></p>
+        </div>
+        <div><h4>CAN data:</h4> 
+            <p id="log4"></p>
+        </div>
+    </div>
 </body>
 </html>
 

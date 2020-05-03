@@ -18,8 +18,9 @@ function interpolateArray(data, fitCount) {
 	return newData;
 };
 
+
 $(function () {
-    'use strict'
+   
 
     var ticksStyle = {
         fontColor: '#495057'
@@ -47,78 +48,52 @@ $(function () {
         }
     }
     
-    var optStyle2 = {
-        maintainAspectRatio: false,
-        scales: {
-            yAxes: [{
-                gridLines: {
-                    display: true
-                },
-                ticks: $.extend({
-                    beginAtZero: true,
-                    suggestedMax: 3
-                }, ticksStyle)
-            }],
-            xAxes: [{
-                display: false,
-                scaleLabel: {
-                    display: false
-                },
-                ticks: ticksStyle
-            }]
-        }
-    }
-     var optStyle3 = {
-        maintainAspectRatio: false,
-        scales: {
-            yAxes: [{
-                gridLines: {
-                    display: true
-                },
-                ticks: $.extend({
-                    beginAtZero: true,
-                    suggestedMax: 300
-                }, ticksStyle)
-            }],
-            xAxes: [{
-                display: false,
-                scaleLabel: {
-                    display: false
-                },
-                ticks: ticksStyle
-            }]
-        }
-    }
-    
-     var optStyle4 = {
-        maintainAspectRatio: false,
-        scales: {
-            yAxes: [{
-                gridLines: {
-                    display: true
-                },
-                ticks: $.extend({
-                    beginAtZero: true,
-                    suggestedMax : 10000
-                }, ticksStyle)
-            }],
-            xAxes: [{
-                display: false,
-                scaleLabel: {
-                    display: false
-                },
-                ticks: ticksStyle
-            }]
-        }
-    }
-    
-    
+    var optStyle2 = JSON.parse(JSON.stringify(optStyle));
+    var optStyle3 = JSON.parse(JSON.stringify(optStyle));
+    var optStyle4 =JSON.parse(JSON.stringify(optStyle));
+    optStyle2['scales']['yAxes'][0]['ticks']['suggestedMax'] = 3;
+    optStyle3['scales']['yAxes'][0]['ticks']['suggestedMax'] = 300;
+    optStyle4['scales']['yAxes'][0]['ticks']['suggestedMax'] = 10000;
 
-    var timer;
+    
+    var optStyle5 = {
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                id: 'A',
+                position: 'left',           
+                gridLines: {
+                    display: true
+                },
+                ticks: $.extend({
+                    beginAtZero: true,
+                    suggestedMax : 67000000
+                }, ticksStyle)
+                },
+                {
+                    id: 'B',
+                    position: 'right',           
+                    gridLines: {
+                        display: true
+                    },
+                    ticks: $.extend({
+                        beginAtZero: true,
+                        suggestedMax : 50000
+                    }, ticksStyle)
+                }],
+            xAxes: [{
+                display: false,
+                scaleLabel: {
+                    display: false
+                },
+                ticks: ticksStyle
+            }]
+        }
+    } 
 
     var namespace = '/sensors';
     var socket = io(namespace);
-    socket.close();
+    socket.close();    
 
     var zero = 0;
     var readyToRequest = true;
@@ -248,16 +223,27 @@ $(function () {
         options: optStyle4
     })
 
-    var $Arduino = $('#Arduino')
-    var Arduino = new Chart($Arduino, {
+    var $CAN = $('#CAN')
+    var CAN = new Chart($CAN, {
         type: 'line',
         data: {
             datasets: [{
+                yAxisID: 'A',
                 data: [],
                 borderColor: '#6BC1FF'
-            }]
+            },
+                {   
+                    yAxisID: 'B',
+                    data: [],
+                    borderColor: '#52FF89'
+                },
+                {   
+                    yAxisID: 'B',
+                    data: [],
+                    borderColor: '#FF7A78'
+                }]
         },
-        options: optStyle
+        options: optStyle5
     })
         //This event fires after the select's value has been changed.
     $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -284,9 +270,9 @@ $(function () {
             renderSelectedGraphs($(this).val());
         }
         
-        if($(this).data("type")=='recording'){
+        if($(this).data("type")=='recording'){            
             var sensorsToken = $('#selectRecordings').val().join(';');
-            $("#downlaodFiles").attr("href","/recordings/last_recording?data="+sensorsToken+"&rnd="+Math.random());
+            $("#downloadFiles").attr("href","/recordings/last_recording?data="+sensorsToken+"&rnd="+Math.random());
         }
 
     });
@@ -305,20 +291,30 @@ $(function () {
             }
         });
     }
-
+    
+    $("#rec").hide();      
+    var isRecording = false;
+    
     $(".readSensors, .recordSensors").click(function(){
         
         var reading = $(this).hasClass("readSensors");
-        var idPicker = reading?'#selectReadings':"#selectRecordings";
+        var idPicker = reading?'#selectReadings':"#selectRecordings";        
+        
         
         if ($(this).hasClass('running')) {
 
             if(reading){
                 stopReading();
-            }else{
-                Recording('stop');
+                $(".recordSensors").children('span').html('Start');
+                $("#rec").hide(); 
+                $(".recordSensors").prop('disabled', true);
+            }else{                
+                Recording('stop');      
+                    $("#rec").hide();
+                    $(".readSensors").prop('disabled', false);  
+                    $("#downloadFiles").removeClass('disabled');            
             }
-
+            
             $(idPicker).prop('disabled', false);
             $(idPicker).selectpicker('refresh');
             $(this).removeClass('running');
@@ -328,22 +324,28 @@ $(function () {
 
         } else {
 
-            if(reading){
-                startReading();
+            if(reading){ 
+                startReading(); 
+                        
             }else{
-                Recording('start');
-            }
-
+                    $("#rec").show();
+                    Recording('start');                                          
+                    $(".readSensors").prop('disabled', true); 
+                    $("#downloadFiles").addClass('disabled');                   
+             }   
+                     
             $(idPicker).prop('disabled', true);
             $(idPicker).selectpicker('refresh');
             $(this).addClass('running');
             $(this).children('i').removeClass('text-success').removeClass('fa-play');
             $(this).children('i').addClass('text-danger').addClass('fa-stop');
             $(this).children('span').html('Stop');
+            
         }
     });
 
     function stopReading(){
+        window.clearInterval(pingPong);
         socket.close();
     }
 
@@ -383,14 +385,77 @@ $(function () {
                 'data' : LoadCell
             }
         },
+        'CAN':{
+           'channelName':'CAN_data',
+            'chartObjects': {
+                'buff_data' : CAN
+            } 
+        }
     }
-
+    
+    var pingPong;
+    
     function startReading(){
 
         var startedChannels = [];
         var selectedSensors = $('#selectReadings').val();
         
-        socket = io(namespace);
+        socket = io(namespace);   
+        
+        var ping_pong_times = [];
+        var start_time;     
+           
+        socket.on('connect', function() {
+                socket.emit('my_event', {data: 'connected from charts'});
+                ping_pong_times = [];
+        });
+            
+        // Tests message latency by sending a "ping"
+        // message. The server then responds with a "pong" message and the
+        // round trip time is measured.
+      
+        pingPong = window.setInterval(function() {
+            start_time = (new Date).getTime();
+            socket.emit('my_ping');
+        }, 1000);
+        
+        // Handler for the "pong" message. When the pong is received, the
+        // time from the ping is stored, and the average of the last 30
+        // samples is average and displayed.
+        socket.on('my_pong', function() {
+            var latency = (new Date).getTime() - start_time;
+            ping_pong_times.push(latency);
+            ping_pong_times = ping_pong_times.slice(-30); // keep last 30 samples
+            var sum = 0;
+            for (var i = 0; i < ping_pong_times.length; i++)
+                sum += ping_pong_times[i];
+            $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
+        });    
+   
+        
+        socket.on('busy', function(msg) {        
+            if(msg){
+              isRecording = msg.isRecording   
+            }    
+            else{
+                isRecording = !isRecording;                
+            }  
+            prop= isRecording?true:false;
+            $(".recordSensors").prop('disabled', prop);                  
+            if(isRecording){
+                $(".recordSensors").children('span').html('In Use'); 
+                $("#rec").children('span').eq(1).text(" Already recording...")
+                $("#rec").show();
+                $("#downloadFiles").addClass('disabled');
+            }
+            else{
+            $(".recordSensors").children('span').html('Start');
+            $("#rec").children('span').eq(1).text(" Recording...")
+            $("#rec").hide(); 
+            $("#downloadFiles").removeClass('disabled');
+            }
+            
+        });
 
         $.each(socketChannelMap, function( sensorName, value) {
             if(startedChannels.includes(value.channelName)){
@@ -400,7 +465,7 @@ $(function () {
                 return;
             }
             startedChannels.push(value.channelName);
-            socket.on(value.channelName, function (response) {
+        socket.on(value.channelName, function (response) {
                 if(response){
                     response = JSON.parse(response);
                     updateResponse(value.chartObjects,response);
@@ -408,22 +473,27 @@ $(function () {
             });
         });
 
-    }
+    }  
     
     function Recording(action){
         var startedChannels = [];
-        var selectedSensors = $('#selectRecordings').val();
-        
-        socket.emit('record',[action, selectedSensors])
-    }
+        var selectedSensors = $('#selectRecordings').val();        
+        socket.emit('record',[action, selectedSensors]);
+    }    
     
+  $(window).on("unload",function(){    
+       if ($(".recordSensors").hasClass('running')) {                   
+            socket.emit('record',['stop', $('#selectRecordings').val()]); 
+        }            
+            stopReading() ;        
+        });
     
     function updateResponse(chartObjects, response){
       $.each(chartObjects, function( responseName, chartObject) {
         drawGraph(chartObject, response[responseName], false);
       });
     }
-
-
-
+    
+    
+    
 })

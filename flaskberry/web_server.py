@@ -6,6 +6,8 @@ from flask_socketio import SocketIO
 from flask import request, send_file, abort
 import pathlib
 
+#Create a Flask webserver
+
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose

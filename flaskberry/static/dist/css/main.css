@@ -17,11 +17,26 @@ body {
   background-color: #ffffff;
 }
 
+/*
+#recording{
+  display: none;
+}
+*/
 
 h1, h2, h3, h4, h5, h6 {
   margin-top: 0;
   margin-bottom: 0.5rem;
 }
+
+.btn:disabled{
+  cursor: default;
+  pointer-events: all !important; 
+}
+
+#rec.btn:disabled{
+  opacity: 1 !important;
+}
+
 
 
 [hidden] {
