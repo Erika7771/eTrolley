@@ -24,6 +24,7 @@
                 socket.emit('my_event', {data: 'I\'m connected!'});
             });            
             
+            // Print the data received on the sensors channels
             socket.on('IMU_data', function(msg) {
                 $('#log').html(msg);
             });

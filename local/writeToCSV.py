@@ -7,8 +7,11 @@ from pathlib import Path
 from datetime import datetime
 import numpy as np
 
+#Create single csv files and a complete csv of all recorded sensors  
+
 my_path = Path(__file__).resolve().parents[1]
 
+#create different csv files for each sensor
 def create_file(sensor):
     global my_path
     
@@ -50,7 +53,9 @@ def write_file(csvfile, sensor, data_queue, STOP_TOKEN):
                 return            
             writer.writerow([datetime.now()-start_time]+list(line))
                                             
-            
+ # Merge the files of all recorded sensors into a new one.
+ # Since each sensor has its own reading frequency, the values of the lowest ones are
+ # evenly spread out to match the timestamps of the fasted one. 
 def unifile(sensors):
     global my_path
     
@@ -110,7 +115,8 @@ def unifile(sensors):
         writer = csv.writer(output, delimiter=",", lineterminator = '\n')    
         for row in newData:
             writer.writerow(row)
-            
+   
+#strech list of readings
 def stretchList(arr, finalLength, fill_char=''):
     newList = [fill_char] * finalLength
     startingLength = len(arr)

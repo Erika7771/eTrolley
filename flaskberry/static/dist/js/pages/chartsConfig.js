@@ -1,27 +1,10 @@
-function interpolateArray(data, fitCount) {
-    
-    var linearInterpolate = function (before, after, atPoint) {
-        return before + (after - before) * atPoint;
-    };
-    
-	var newData = new Array();
-	var springFactor = new Number((data.length - 1) / (fitCount - 1));
-	newData[0] = data[0]; // for new allocation
-	for ( var i = 1; i < fitCount - 1; i++) {
-		var tmp = i * springFactor;
-		var before = new Number(Math.floor(tmp)).toFixed();
-		var after = new Number(Math.ceil(tmp)).toFixed();
-		var atPoint = tmp - before;
-		newData[i] = linearInterpolate(data[before], data[after], atPoint);
-		}
-	newData[fitCount - 1] = data[data.length - 1]; // for new allocation
-	return newData;
-};
-
+/*The  code below creates a connection to the websocket and listen on 
+ * the sensors channels. Each time a new data is sent, the corresponding 
+ * graph is updated.*/
 
 $(function () {
    
-
+    /* Define styles for each graph*/
     var ticksStyle = {
         fontColor: '#495057'
     }
@@ -90,14 +73,15 @@ $(function () {
             }]
         }
     } 
-
+    
     var namespace = '/sensors';
     var socket = io(namespace);
     socket.close();    
 
     var zero = 0;
     var readyToRequest = true;
-
+    
+    /* Update the graph with the new data */
     function drawGraph(graph, newData, checkReady) {
         var i;
         var j;
@@ -119,6 +103,8 @@ $(function () {
         graph.update();
     }
 
+   /* Set some charts representation options and define the basic
+    * structure of each graph.*/
     Chart.defaults.global.elements.line.fill = false;
     Chart.defaults.global.elements.line.borderWidth = 1;
     Chart.defaults.global.elements.line.tension = 0;
@@ -245,7 +231,11 @@ $(function () {
         },
         options: optStyle5
     })
-        //This event fires after the select's value has been changed.
+    /* This event fires when the user selects the sensors from the dropdowns.
+     * If the dropdown is for the readings, renderSelectedGraphs is called
+     * and only the selected graphs are shown.
+     * If the dropdown is for the recordings, the links necessary to then 
+     * download the files are set up */
     $('.selectpicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
         var latest_value = $(this).children('option').eq(clickedIndex).val();
         var latest_selection = isSelected;
@@ -269,14 +259,15 @@ $(function () {
         if($(this).data("type")=='reading'){
             renderSelectedGraphs($(this).val());
         }
-        
+    
         if($(this).data("type")=='recording'){            
             var sensorsToken = $('#selectRecordings').val().join(';');
             $("#downloadFiles").attr("href","/recordings/last_recording?data="+sensorsToken+"&rnd="+Math.random());
+            $("#downloadUnifile").attr("href","/recordings/unifile");
         }
 
     });
-
+    /*This function shows or hides the graphs depending on which are selected. */
     function renderSelectedGraphs(graphs){
         var renderer = this;
         var howMany = graphs.length;
@@ -291,10 +282,15 @@ $(function () {
             }
         });
     }
-    
+   
     $("#rec").hide();      
     var isRecording = false;
     
+    /*This event fires when the "Start" buttons are clicked and changes
+     *their appearance (ex green Start -> red Stop) and enables/disables 
+     *the others buttons (ex. to avoid recording before connecting)
+     * Depending on wich button is pressed and its previous state, 
+       stopReading, Recording or startReading is called.*/
     $(".readSensors, .recordSensors").click(function(){
         
         var reading = $(this).hasClass("readSensors");
@@ -312,7 +308,7 @@ $(function () {
                 Recording('stop');      
                     $("#rec").hide();
                     $(".readSensors").prop('disabled', false);  
-                    $("#downloadFiles").removeClass('disabled');            
+                    $(".dwldButtons").removeClass('disabled');            
             }
             
             $(idPicker).prop('disabled', false);
@@ -331,7 +327,7 @@ $(function () {
                     $("#rec").show();
                     Recording('start');                                          
                     $(".readSensors").prop('disabled', true); 
-                    $("#downloadFiles").addClass('disabled');                   
+                    $(".dwldButtons").addClass('disabled');                   
              }   
                      
             $(idPicker).prop('disabled', true);
@@ -343,12 +339,15 @@ $(function () {
             
         }
     });
-
+    
+    
     function stopReading(){
         window.clearInterval(pingPong);
         socket.close();
     }
 
+    /*This variable maps each sensor with the corresponding channel
+     * and the message content (the data) with the corresponding graph.  */
     var socketChannelMap = {
         'IMU_acc': {
             'channelName':'IMU_data',
@@ -395,6 +394,7 @@ $(function () {
     
     var pingPong;
     
+    /* Create a socket instance, and listen on the sensors channels */
     function startReading(){
 
         var startedChannels = [];
@@ -430,9 +430,9 @@ $(function () {
             for (var i = 0; i < ping_pong_times.length; i++)
                 sum += ping_pong_times[i];
             $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
-        });    
+        }); 
    
-        
+        /*Change buttons appearance if someone is already recording */
         socket.on('busy', function(msg) {        
             if(msg){
               isRecording = msg.isRecording   
@@ -446,18 +446,23 @@ $(function () {
                 $(".recordSensors").children('span').html('In Use'); 
                 $("#rec").children('span').eq(1).text(" Already recording...")
                 $("#rec").show();
-                $("#downloadFiles").addClass('disabled');
+                $(".dwldButtons").addClass('disabled');
             }
             else{
             $(".recordSensors").children('span').html('Start');
             $("#rec").children('span').eq(1).text(" Recording...")
             $("#rec").hide(); 
-            $("#downloadFiles").removeClass('disabled');
+            $(".dwldButtons").removeClass('disabled');
             }
             
         });
-
-        $.each(socketChannelMap, function( sensorName, value) {
+        
+        /*Go through the socketChannelMap and for each sensor check if 
+         * it is selected. If that's the case, add its channel to startedChannels.
+         * First if statement avoids to add the same channel multiple times, second one
+         * avoids listening on unselected channels.
+         *   */    
+        $.each(socketChannelMap, function(sensorName, value) {
             if(startedChannels.includes(value.channelName)){
                 return;
             }
@@ -465,6 +470,10 @@ $(function () {
                 return;
             }
             startedChannels.push(value.channelName);
+            
+        /*This function fires each time a new message (response) is sent on a channel.
+          The new data and the corresponding chart object are given as argument 
+          to updateResponse. */    
         socket.on(value.channelName, function (response) {
                 if(response){
                     response = JSON.parse(response);
@@ -475,19 +484,22 @@ $(function () {
 
     }  
     
+    /* Send to Flask server the action to execute when recording (start or stop)
+     * and the concerned sensors.*/
     function Recording(action){
-        var startedChannels = [];
         var selectedSensors = $('#selectRecordings').val();        
         socket.emit('record',[action, selectedSensors]);
     }    
     
+    /*Stop reading (and recording) if the user closes the window*/
   $(window).on("unload",function(){    
        if ($(".recordSensors").hasClass('running')) {                   
             socket.emit('record',['stop', $('#selectRecordings').val()]); 
         }            
             stopReading() ;        
         });
-    
+    /* Give to the function drawGraph the chart object to update and the
+     * new values*/
     function updateResponse(chartObjects, response){
       $.each(chartObjects, function( responseName, chartObject) {
         drawGraph(chartObject, response[responseName], false);

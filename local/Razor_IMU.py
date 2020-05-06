@@ -27,13 +27,17 @@ def read():
 
 def init():
     global Razor_IMU
-    Razor_IMU = FaBo9Axis_MPU9250.MPU9250()
-    print("Hey, Razor connected!")
-    # Start background process 
-    t_read = threading.Thread(target=read)
-    t_read.start()
-
-      
+    try:
+        Razor_IMU = FaBo9Axis_MPU9250.MPU9250()
+        print("Hey, Razor connected!")
+        # Start background process
+        t_read = threading.Thread(target=read)
+        t_read.start()
+    except OSError:
+        print("Connecting Razor IMU...")
+        time.sleep(1)
+        init()
+              
 def get_buffers():
     return r.getBuffers()
 

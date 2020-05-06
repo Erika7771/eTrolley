@@ -17,8 +17,7 @@ def cb_angular_velocity(x,y,z):
     r.buff_vel.append([x,y,z])
     if r.data_queue_vel:
         r.data_queue_vel.put([x,y,z])
-       
-    
+           
 def IMU_init():
     global ipcon
     

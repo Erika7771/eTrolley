@@ -4,7 +4,7 @@ from zipfile import ZipFile
 from flask import Flask
 from flask_socketio import SocketIO
 from flask import request, send_file, abort
-import pathlib
+from pathlib import Path 
 
 #Create a Flask webserver
 
@@ -41,12 +41,17 @@ app.register_blueprint(charts.bp)
 import web_sockets
 app.register_blueprint(web_sockets.bp)
 
+
+my_path = Path(__file__).resolve().parents[0] #/home/pi/raspweb/flaskberry
+
 def get_latestRecord(sensor):
-    folder = f'./raspweb/flaskberry/static/recordings/{sensor}/'
-    list_of_files = glob.glob(f'{folder}*.csv')
+    folder = f"{my_path}/static/recordings/{sensor}/"
+    list_of_files = glob.glob(f"{folder}*.csv")
     if len(list_of_files)<1:
         return None
     latest_file = max(list_of_files, key=os.path.getctime)
+    print(latest_file)
+    print(type(latest_file))
     return latest_file
 
 def get_recordsZip(sensors):
@@ -64,32 +69,50 @@ def get_recordsZip(sensors):
         return "static/recordings/"+folderName+"/"+fileName
     
     # Create a ZipFile Object
-    zipFile = 'static/recordings/last.zip'
-    zipObj = ZipFile('./raspweb/flaskberry/'+zipFile, 'w')
+    zipFile = "static/recordings/last.zip"
+    zipObj = ZipFile(f"{my_path}/"+zipFile, 'w')
     
     for file in filesToZip:
        zipObj.write(file,os.path.basename(file))
        
     zipObj.close()
-    
+    print(zipFile)
+    print(type(zipFile))
     return zipFile 
     
-
+#handle download zip request.
 @app.route('/recordings/last_recording')
 def serve_records():
-   
+    
     if request.args.get('data'):
        sensors = request.args.get('data').split(";")
     else:
         return abort(404)
     
     filename = get_recordsZip(sensors)
-    
     return send_file(filename,
                      cache_timeout = 1,
                      as_attachment=True,
                      attachment_filename=os.path.basename(filename))
 
+#handle download unifile request
+@app.route('/recordings/unifile')
+def serve_unifile():    
+    
+    list_of_files = glob.glob(f"{my_path}/static/recordings/*.csv")
+    
+    if len(list_of_files) < 1:
+        return abort(404)
+        
+    if len(list_of_files) > 1:
+        return abort(404)
+
+    unifile = list_of_files[0]
+     
+    return send_file(unifile,
+                     cache_timeout = 1,
+                     as_attachment=True,
+                     attachment_filename=os.path.basename(unifile))
 
 
 if __name__ == "__main__":    

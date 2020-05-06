@@ -12,3 +12,6 @@ htmlcov/
 
 build/
 *.egg-info/
+
+*.csv
+*.zip

@@ -37,7 +37,7 @@
              
           <div class="col-md-10">
             <div class="row">
-
+              <!-- Dropdown menu for reading -->  
               <div class="col-sm-12">
                 <label style="width: 145px;" for="selectReadings">Select readings:</label>
                 <select class="selectpicker" id="selectReadings" multiple data-type="reading">
@@ -53,7 +53,7 @@
                     <i class="fa fa-play-circle text-success"></i> <span>Start</span>
                 </button>
               </div><!-- /.col -->
-
+              <!-- Dropdown menu for recording --> 
               <div class="col-sm-12 mt-2">
                 <label style="width: 145px;" for="selectRecordings">Select recordings:</label>
                 <select id="selectRecordings" class="selectpicker" multiple data-type="recording">
@@ -66,7 +66,9 @@
                   <option value="CAN">CAN bus</option>
                 </select>
                 <button class="btn btn-light recordSensors" disabled><i class="fa fa-play-circle text-success"></i> <span>Start</span></button>
-                <a  id="downloadFiles" href="/recordings/last_recording" target="_blank" class="btn btn-light"><i class="fa fa-arrow-down text-success"></i> <span>Download</span></a>
+                <!-- Download buttons --> 
+                <a  id="downloadFiles" href="/recordings/last_recording" target="_blank" class="btn btn-light dwldButtons"><i class="fa fa-arrow-down text-success"></i> <span>Download .zip</span></a>
+                 <a  id="downloadUnifile" href="/recordings/unifile" target="_blank" class="btn btn-light dwldButtons"><i class="fa fa-arrow-down text-success"></i> <span>Download .csv</span></a>
                     <button id= "rec" class="btn btn-white"disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> <span>Recording...</button>                 
               </div>
             </div>
@@ -77,7 +79,11 @@
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-
+    
+    <!-- Each card contains the basic structure of the graphs and has a canvas 
+         element that corresponds to the content of the graph of each sensor. 
+         These canvas are updated form chartsConfig.js -->
+    
     <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
