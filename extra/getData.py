@@ -60,8 +60,8 @@ def sendMotorsCommand(command):   #command: bytes, buffer or ASCII string
 
 if __name__ == "__main__":
     connectToServer()
-     
+    sendMotorsCommand({'dutyCycle' : 150}) 
     while True:
-        sendMotorsCommand("start")
+        
 #         print(LoadCell_data)
         time.sleep(1)

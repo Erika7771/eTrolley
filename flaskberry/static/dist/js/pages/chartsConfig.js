@@ -50,14 +50,15 @@ $(function () {
                 },
                 ticks: $.extend({
                     beginAtZero: true,
-                    suggestedMax : 67000000
+                    suggestedMax : 256
                 }, ticksStyle)
                 },
                 {
                     id: 'B',
-                    position: 'right',           
+                    position: 'right',
+                    display: false,  //set to true to see it on the graph         
                     gridLines: {
-                        display: true
+                        display: true 
                     },
                     ticks: $.extend({
                         beginAtZero: true,
@@ -219,12 +220,12 @@ $(function () {
                 borderColor: '#6BC1FF'
             },
                 {   
-                    yAxisID: 'B',
+                    yAxisID: 'A',
                     data: [],
                     borderColor: '#52FF89'
                 },
                 {   
-                    yAxisID: 'B',
+                    yAxisID: 'A',
                     data: [],
                     borderColor: '#FF7A78'
                 }]
@@ -387,7 +388,7 @@ $(function () {
         'CAN':{
            'channelName':'CAN_data',
             'chartObjects': {
-                'buff_data' : CAN
+                'data' : CAN
             } 
         }
     }
@@ -506,6 +507,16 @@ $(function () {
       });
     }
     
-    
-    
+    /*Fire when the "Set" button is clicked. Send motors command to Flask
+     * server. */    
+    $(".set").click(function(){     
+        var commands = {};
+        var inputs = document.getElementsByClassName('form-control');
+        for (var i = 0; i < inputs.length; i++){            
+            if (inputs[i].value){ 
+                commands[inputs[i].name] =  inputs[i].value;
+            }                        
+        }
+        socket.emit('motorCommands',commands);           
+    });
 })

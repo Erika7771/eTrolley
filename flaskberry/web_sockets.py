@@ -60,8 +60,8 @@ def storeData(data):
     
 @sio.on('sendCAN_buffer',namespace='/sensors')
 def storeData(data):
-    global sendCAN_buffer
-    sendCAN_buffer = data
+    global CAN_data
+    CAN_data = data
 
 ####### WEB SOCKETS #######
 
@@ -122,13 +122,18 @@ def bridgeWebLocal(channel,msg=""):
 
 
 #Define channels to listen on and functions to execute each time a new message arrives.    
-@websocketio.on('record', namespace='/sensors',)
+@websocketio.on('record', namespace='/sensors')
 def record(data):
     global isRecording
     isRecording = not isRecording
     emit('busy',"",broadcast=True, include_self=False)
     bridgeWebLocal('record',data)    
-    
+
+# Recieve motor commands from the web page and send them to the local server. 
+@websocketio.on('motorCommands', namespace="/sensors")
+def sendCommands(data):
+    bridgeWebLocal('motorsControl',data)
+
 #Record latency    
 @websocketio.on('my_ping', namespace='/sensors')
 def ping_pong():

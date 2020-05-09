@@ -35,7 +35,7 @@
             <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
           </div><!-- /.col -->  
              
-          <div class="col-md-10">
+          <div class="col-md-7 pr-0">
             <div class="row">
               <!-- Dropdown menu for reading -->  
               <div class="col-sm-12">
@@ -74,7 +74,31 @@
             </div>
 
 
-          </div>   
+          </div>  
+          <div class="col-md-3 pl-0"> 
+          	<form>
+          		<div class="form-group row">
+    					<label for="setSpeed" class="col-sm-3 pr-0 col-form-label">Speed:</label>
+    					<div class="col-sm-4">
+   						<input type="number" max="255" min="0" name="speed" class="form-control form-control-sm" id="setSpeed"  placeholder="[0-255]">
+						</div>          		
+          		</div>  
+          		<div class="form-group row">
+    					<label for="setCurrent" class="col-sm-3 pr-0 col-form-label">Current:</label>
+    					<div class="col-sm-4">
+   						<input type="number" name="current" class="form-control form-control-sm" id="setCurrent"  placeholder="[0-255]">
+						</div>  
+						<button type="button" class="btn btn-sm btn-success set">Set</button>         		
+          		</div>  
+          		<div class="form-group row">
+    					<label for="setDutyCycle" class="col-sm-3 pr-0 col-form-label">Duty Cycle:</label>
+    					<div class="col-sm-4">
+   						<input type="number" name="dutyCycle" class="form-control form-control-sm" id="DutyCycle"  placeholder="[0-255]">
+						</div>  
+						       		
+          		</div>             		
+          	</form>          
+          </div> <!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
