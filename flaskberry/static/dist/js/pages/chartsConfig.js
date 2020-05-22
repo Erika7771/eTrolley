@@ -10,6 +10,7 @@ $(function () {
     }
 
     var optStyle = {
+        events: [],
         maintainAspectRatio: false,
         scales: {
             yAxes: [{
@@ -507,16 +508,41 @@ $(function () {
       });
     }
     
-    /*Fire when the "Set" button is clicked. Send motors command to Flask
+    /*Fire when the "Set" button is clicked. Check if the motor commands
+     * are valid and send them to Flask.
      * server. */    
     $(".set").click(function(){     
         var commands = {};
         var inputs = document.getElementsByClassName('form-control');
+        
         for (var i = 0; i < inputs.length; i++){            
             if (inputs[i].value){ 
+                if (!checkValidity(inputs[i])){
+                    return;
+                }
                 commands[inputs[i].name] =  inputs[i].value;
             }                        
         }
         socket.emit('motorCommands',commands);           
     });
+    
+     /*Return true if the input values are in the range. Otherwise
+      * an error message is displayed*/
+    function checkValidity(field){  
+        var min = field.min;
+        var max = field.max;  
+         if (field.value < parseInt(min)){
+            field.setCustomValidity("The number must be grater or equal to "+min);
+            return false
+        }
+        if (field.value > parseInt(max)){   
+            field.setCustomValidity("The number must be smaller or equal to "+max);
+            return false
+        }
+        else {
+            field.setCustomValidity("");
+            return true
+        }              
+    }; 
+    
 })

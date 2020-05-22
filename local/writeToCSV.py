@@ -44,18 +44,18 @@ def create_file(sensor):
     return csvfile
 
 def write_file(csvfile, sensor, data_queue, STOP_TOKEN):
-    with open(csvfile, "a")as output:
+    with open(csvfile, "a")as output:        
         writer = csv.writer(output, delimiter=",", lineterminator = '\n')
         start_time = datetime.now()
         while True:
             line = data_queue.get()
             if line == STOP_TOKEN:
-                return            
+                return
             writer.writerow([datetime.now()-start_time]+list(line))
                                             
  # Merge the files of all recorded sensors into a new one.
  # Since each sensor has its own reading frequency, the values of the lowest ones are
- # evenly spread out to match the timestamps of the fasted one. 
+ # evenly spread out to match the timestamps of the fasted sensor. 
 def unifile(sensors):
     global my_path
     
@@ -87,8 +87,13 @@ def unifile(sensors):
             timeCol = []
             for row in fileObject:
                 row_count += 1
-                timeCol.append(row[0])
-            
+                if row_count == 2:
+                    offset_dateTime = datetime.strptime(row[0],"%H:%M:%S.%f")
+                if not row_count == 1:
+                    row_dateTime = datetime.strptime(row[0],"%H:%M:%S.%f")
+                    timeCol.append(row_dateTime-offset_dateTime)
+                else:
+                     timeCol.append(row[0])
             if row_count > maxLength:
                 newData = np.array([timeCol]).T
                 maxLength = row_count
@@ -116,7 +121,7 @@ def unifile(sensors):
         for row in newData:
             writer.writerow(row)
    
-#strech list of readings
+#strech list of readings. Copy last value do fill the space.
 def stretchList(arr, finalLength, fill_char=''):
     newList = [fill_char] * finalLength
     startingLength = len(arr)
@@ -132,6 +137,7 @@ def stretchList(arr, finalLength, fill_char=''):
     for i in range(0, finalLength):
         if i+1 > trigger:
             trigger += triggerStep
+            #newList[i] = arr[oldEl-1]
         else:
             newList[i] = arr[oldEl]
             oldEl += 1

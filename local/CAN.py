@@ -17,7 +17,9 @@ def send(ID=0, command=0):
         message.bus.send(msg)
 #       print(msg)
     except can.CanError:
-         print("Unable to send CAN messages")     
+        print("Unable to send CAN messages")
+    except ValueError:
+        print("Command must be in range (0, 256)")
 
 #Read CAN bus, split the data into speed, current and duty cycle and store them in different buffers.
 def read():
@@ -35,15 +37,18 @@ def read():
             
 def command(data):
     for key in data.keys():        
-        if key =='speed':
+        if key == 'speed':
             ID = 1
             send(ID, int(data[key])) 
-        if key =='current':
+        if key == 'current':
             ID = 2
             send(ID, int(data[key])) 
-        if key =='dutyCycle':
+        if key == 'dutyCycle':
             ID = 3
-            send(ID, int(data[key])) 
+            send(ID, int(data[key]))
+        if key == 'LED':
+            ID = 4
+            send(ID, int(data[key]))
 
 def init():
     bustype = 'socketcan'

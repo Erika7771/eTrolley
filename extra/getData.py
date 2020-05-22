@@ -5,7 +5,7 @@ import time
 
 
 sio = socketio.Client()
-LocalHost = "192.168.1.11:5500"
+LocalHost = "192.168.4.1:5500"
 
 def connectToServer():
     try:
@@ -56,11 +56,15 @@ def readData(data):
     
 # send commands to the motors
 def sendMotorsCommand(command):   #command: bytes, buffer or ASCII string 
-    sio.emit('motorsControl',command,namespace='/sensors')   
+    sio.emit('motorsControl',command,namespace='/sensors')
+    
+def blinkingLED(command):
+    sio.emit('motorsControl',{'LED': command}, namespace ='/sensors')
 
 if __name__ == "__main__":
     connectToServer()
-    sendMotorsCommand({'dutyCycle' : 150}) 
+    sendMotorsCommand({'dutyCycle' : 150})
+    blinkingLED(1)
     while True:
         
 #         print(LoadCell_data)

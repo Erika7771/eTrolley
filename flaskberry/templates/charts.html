@@ -12,13 +12,13 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href='/static/plugins/fontawesome-free/css/all.min.css'/>
   <!-- IonIcons -->
-  <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="/static/dist/css/ionicons.min.css">
   <!-- Main style -->
   <link rel="stylesheet" href='/static/dist/css/main.css'/>
   <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <link href="/static/dist/css/style.css" rel="stylesheet">
   <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/static/dist/css/bootstrap-select.min.css">
 
 
     </head>
@@ -30,15 +30,15 @@
     <div class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-md-2">
+          <div class="col-xl-2">
             <h1 class="m-0 text-dark">Sensors Readings</h1>
             <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
           </div><!-- /.col -->  
              
-          <div class="col-md-7 pr-0">
-            <div class="row">
+          <div class="col-lg-9 col-xl-7 pt-xl-2">
+          <div class="row align-items-center" style="height: 100%;">
               <!-- Dropdown menu for reading -->  
-              <div class="col-sm-12">
+              <div class="col-sm-12 pt-md-3">
                 <label style="width: 145px;" for="selectReadings">Select readings:</label>
                 <select class="selectpicker" id="selectReadings" multiple data-type="reading">
                   <option value="all" selected>All</option>
@@ -54,7 +54,7 @@
                 </button>
               </div><!-- /.col -->
               <!-- Dropdown menu for recording --> 
-              <div class="col-sm-12 mt-2">
+              <div class="col-sm-12 mt-2 pb-md-3">
                 <label style="width: 145px;" for="selectRecordings">Select recordings:</label>
                 <select id="selectRecordings" class="selectpicker" multiple data-type="recording">
                   <option value="all">All</option>
@@ -67,36 +67,32 @@
                 </select>
                 <button class="btn btn-light recordSensors" disabled><i class="fa fa-play-circle text-success"></i> <span>Start</span></button>
                 <!-- Download buttons --> 
-                <a  id="downloadFiles" href="/recordings/last_recording" target="_blank" class="btn btn-light dwldButtons"><i class="fa fa-arrow-down text-success"></i> <span>Download .zip</span></a>
-                 <a  id="downloadUnifile" href="/recordings/unifile" target="_blank" class="btn btn-light dwldButtons"><i class="fa fa-arrow-down text-success"></i> <span>Download .csv</span></a>
+                <a  id="downloadFiles" href="/recordings/last_recording" target="_blank" class="btn btn-light dwldButtons"><i class="fa fa-arrow-down text-success"></i> <span> .zip</span></a>
+                 <a  id="downloadUnifile" href="/recordings/unifile" target="_blank" class="btn btn-light dwldButtons"><i class="fa fa-arrow-down text-success"></i> <span> .csv</span></a>
                     <button id= "rec" class="btn btn-white"disabled><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> <span>Recording...</button>                 
               </div>
-            </div>
-
-
+              </div> <!-- /.row -->
+          </div> <!-- /.col -->
+          <div class=" motorControls col-lg-3 ml-lg-0"> 
+          	<form onsubmit="return false">          	
+          		<div class="form-group row">
+    					<label for="setSpeed" class="col-form-label" style="width: 90px;">Speed:</label>    					
+   						<input type="number" min="0" max="255" style="width: 80px;" name="speed" class="form-control form-control-sm" id="setSpeed"  placeholder="[0-255]">
+              
           </div>  
-          <div class="col-md-3 pl-0"> 
-          	<form>
-          		<div class="form-group row">
-    					<label for="setSpeed" class="col-sm-3 pr-0 col-form-label">Speed:</label>
-    					<div class="col-sm-4">
-   						<input type="number" max="255" min="0" name="speed" class="form-control form-control-sm" id="setSpeed"  placeholder="[0-255]">
-						</div>          		
+          		<div class="form-group row ">
+    					<label for="setCurrent" class="col-form-label" style="width: 90px;">Current:</label>
+   						<input type="number" style="width: 80px;"  max="255" min="0" name="current" class="form-control form-control-sm mr-3 " id="setCurrent"  placeholder="[0-255]">
+						   <button type="submit" class="btn btn-sm btn-success set">Set</button>         		
           		</div>  
           		<div class="form-group row">
-    					<label for="setCurrent" class="col-sm-3 pr-0 col-form-label">Current:</label>
-    					<div class="col-sm-4">
-   						<input type="number" name="current" class="form-control form-control-sm" id="setCurrent"  placeholder="[0-255]">
-						</div>  
-						<button type="button" class="btn btn-sm btn-success set">Set</button>         		
-          		</div>  
-          		<div class="form-group row">
-    					<label for="setDutyCycle" class="col-sm-3 pr-0 col-form-label">Duty Cycle:</label>
-    					<div class="col-sm-4">
-   						<input type="number" name="dutyCycle" class="form-control form-control-sm" id="DutyCycle"  placeholder="[0-255]">
-						</div>  
-						       		
-          		</div>             		
+    					<label for="setDutyCycle" class="col-form-label" style="width: 90px;">Duty Cycle:</label>
+   						<input type="number" style="width: 80px;"  max="255" min="0" name="dutyCycle" class="form-control form-control-sm" id="DutyCycle"  placeholder="[0-255]">
+					</div>
+					<div class="form-group row">
+					<label for="setFrequency" class="col-form-label" style="width: 90px;">LED:</label>    					
+   				<input type="number" min="0" max="255" style="width: 80px;" name="LED" class="form-control form-control-sm" id="setFrequency"  placeholder="Hz">         
+   				</div>    		
           	</form>          
           </div> <!-- /.col -->
         </div><!-- /.row -->
@@ -248,14 +244,14 @@
                   <canvas id="CAN" height="200"></canvas>
                 </div>
 
-                <div class="d-flex flex-row">
-                  <span class="mr-auto ">
+                <div class="d-flex flex-row justify-content-end">
+                  <span class="mr-2 ">
                     <i class="fas fa-square text-lightblue"></i> Speed 
                   </span>
                   <span class=" mr-2">
                     <i class="fas fa-square text-lightgreen"></i> Current 
                   </span>
-                  <span class=" mr-2">
+                  <span class=" mr">
                     <i class="fas fa-square text-darksalmon" ></i> Duty cycle
                   </span>
                 </div>
@@ -302,17 +298,17 @@
 
 <!-- jQuery -->
 <script src="../static/plugins/jquery/jquery.min.js"></script>
-<script src="http://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="/static/dist/js/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="/static/dist/js/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+<script src="/static/dist/js/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <!-- Popper -->
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="/static/dist/js/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/static/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="/static/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
 <!-- Latest compiled and minified JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<script src="/static/dist/js/bootstrap-select.min.js"></script>
 
 
 <script src="../static/plugins/chart.js/Chart.min.js"></script>

@@ -23,6 +23,11 @@ body {
 }
 */
 
+.motorControls{
+  padding-top: 10px; 
+  margin-left: 30px; 
+}
+
 .form-group {
   margin-bottom: 0 !important; 
   }

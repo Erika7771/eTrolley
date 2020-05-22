@@ -4,16 +4,14 @@ from zipfile import ZipFile
 from flask import Flask
 from flask_socketio import SocketIO
 from flask import request, send_file, abort
-from pathlib import Path 
+from pathlib import Path
+import eventlet
 
 #Create a Flask webserver
 
-
-# Set this variable to "threading", "eventlet" or "gevent" to test the
-# different async modes, or leave it set to None for the application to choose
-# the best option based on installed packages.
-async_mode = None
-
+#Async mode must be 'eventlet' to make mqtt work
+eventlet.monkey_patch()
+async_mode = 'eventlet'
 
 # create and configure the app
 app = Flask(__name__, instance_relative_config=True)
@@ -116,4 +114,4 @@ def serve_unifile():
 
 
 if __name__ == "__main__":    
-    websocketio.run(app, host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    websocketio.run(app, host='0.0.0.0', port=5000, debug=False, use_reloader=False)
