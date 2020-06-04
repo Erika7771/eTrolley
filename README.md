@@ -46,11 +46,15 @@ Note: Only the main files are represented.
 |getData&#46;py |Connect directly to the Mosquitto Broker without going through the Flask server.|
 
 
-## Installation:
+## Installation
  The first installation requires an internet connection, possibly via ethernet cable since 
  the WiFi module will be used to create another network. 
 ### 1. Operating system
 Install the last operating system (Raspberry Pi OS with Desktop image)  on a Micro SD.
+
+To make NumPy work, install the following package:
+
+    sudo apt-get install libatlas-base-dev
 
 ### 2. Interfaces 
  ####  I2C 
@@ -96,7 +100,8 @@ Listen to all the incoming messages to check if everything works:
 <pre><code>candump any</code></pre>
 
 ### 3. Wireless access point
-Follow the official guide to set up the Network: [https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md](https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md).
+Follow the official guide to set up the Network: [https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md](https://www.raspberrypi.org/documentation/configuration/wireless/access-point-routed.md).     
+Note: The Raspberry IP must be `192.168.4.1`, the same as in the tutorial.
 
 ### 4. Mosquitto Broker
 Follow this guide to install the Mosquitto Broker: https://randomnerdtutorials.com/how-to-install-mosquitto-broker-on-raspberry-pi/
@@ -105,11 +110,13 @@ Follow this guide to install the Mosquitto Broker: https://randomnerdtutorials.c
 The Brick Daemon is necessary to connect the TinkerForge IMU. It can be downloaded from here: [https://www.tinkerforge.com/en/doc/Software/Brickd.html](https://www.tinkerforge.com/en/doc/Software/Brickd.html)
 
 ### 5. Virtual environment
+
 Create a virtual environment  `.venv`in `/home/pi/raspweb` and activate it:
 
     mkdir raspweb
+    cd raspweb
     python3 -m venv /home/pi/raspweb/.venv
-    source path/.venv/bin/activate
+    source .venv/bin/activate
 Install all the requirements:
 
     pip install -r requirements.txt
@@ -119,8 +126,10 @@ Finally, install the Flask application:
 
    `pip install -e .`
 
+
+
 ### 6. Bash script
-This step is optional, it creates a script to automatically run the commands sequence required to start the MQTT client and the Flask server.
+This step is optional, it creates a script to automatically run the commands sequence required to start the MQTT client and the Flask server.    
 In `/home/pi/`create a  new file `startFlaskberry.sh `with the following content:
 
     pkill python
@@ -128,6 +137,13 @@ In `/home/pi/`create a  new file `startFlaskberry.sh `with the following content
     python3 /home/pi/raspweb/local/mqtt_sensorsClient.py &
     python3 /home/pi/raspweb/flaskberry/web_server.py
 
-Note:  If the Razor IMU does not start,  try to add `i2cdetect -y 1` right after `pkill python`.  
+Note:  If the Razor IMU does not start,  try to add `i2cdetect -y 1` right after `pkill python`.
+
+Then, make it executable:
+
+    chmod +x startFlaskberry.sh
+
+To test everything, run `startFlaskberry.sh` and go to `192.168.4.1:5000` : You should see the incoming messages.
+
 
 
