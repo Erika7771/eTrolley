@@ -45,6 +45,7 @@ Note: Only the main files are represented.
 |recordings/|Store all the recordings.|
 |getData&#46;py |Connect directly to the Mosquitto Broker without going through the Flask server.|
 
+The old modules that used the local server can be found in `extra/web_socketsOLD.py` and `extra/local_server.py`.
 
 ## Installation
  The first installation requires an internet connection, possibly via ethernet cable since 
