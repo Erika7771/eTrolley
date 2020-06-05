@@ -1,71 +1,56 @@
-import socketio
-import time
+#----------------------------------------------------------------------------------
+# Example of how to connect to the mosquitto broker without running the Flask server.
+#----------------------------------------------------------------------------------
+import paho.mqtt.client as mqtt
+import os
+import json
 
-#Connect to Local server to retrieve data and send commands without using the web application
+hostName = "192.168.4.1"
 
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print(f"({os.path.basename(__file__)}) Connection successfully established")      
+    else:
+        print(f"(Error value: {rc}). Connection refused")
+    return    
 
-sio = socketio.Client()
-LocalHost = "192.168.4.1:5500"
+# When a new message is published on a subscribed topic, on_message is executed
+# unless another function is defined for that specific topic.
+def on_message(client, userdata, message):
+    print("message received " ,str(message.payload.decode('utf-8')))
+    print("message topic=",message.topic)
+    print("message qos=",message.qos)
 
-def connectToServer():
-    try:
-        sio.connect("http://" +LocalHost ,namespaces=['/sensors'])    
-    except socketio.exceptions.ConnectionError:
-        print("waiting for local server...")
-        time.sleep(1)
-        connectToServer()
-
-@sio.event
-def connect():
-    print('Connection established')
+# Set as callback function for the topic "IMU_data". It is executed instead of
+# on_message
+def on_IMU_data(client, userdata, message):
+    #Convert string message to dictionary 
+    IMU_data =json.loads(message.payload)
+    print(type(IMU_data))
     
-@sio.event
-def disconnect():
-    print('Disconnected from server')
-   
-IMU_data = None
-RazorIMU_data = None
-LoadCell_data = None
-CAN_data = None
-
-#listen on sensors channels and store readings in local variables 
-@sio.on('sendIMU_buffer',namespace='/sensors')
-def readData(data):
-    global IMU_data
-    IMU_data = data
-#     print(f"data from sendIMU_buffer:  {data}")
-    
-@sio.on('sendRazorIMU_buffer',namespace='/sensors')
-def readData(data):
-    global RazorIMU_data
-    RazorIMU_data = data
-#     print(f"data from sendRazorIMU_buffer:  {data}")    
-    
-@sio.on('sendLC_buffer',namespace='/sensors')
-def readData(data):
-    global LoadCell_data
-    LoadCell_data = data
-#     print(f"data from sendLC_buffer:  {data}")
-
-@sio.on('sendCAN_buffer',namespace='/sensors')
-def readData(data):
-    global CAN_data
-    CAN_data = data
-#     print(f"data from sendCAN_buffer:  {data}")
-    
-    
-# send commands to the motors
-def sendMotorsCommand(command):   #command: bytes, buffer or ASCII string 
-    sio.emit('motorsControl',command,namespace='/sensors')
-    
-def blinkingLED(command):
-    sio.emit('motorsControl',{'LED': command}, namespace ='/sensors')
 
 if __name__ == "__main__":
-    connectToServer()
-    sendMotorsCommand({'dutyCycle' : 150})
-    blinkingLED(1)
-    while True:
+    try:
+        print(f"({os.path.basename(__file__)}) Connecting to mosquitto broker...")
+        mqttClient = mqtt.Client("mqttClient")        
+        mqttClient.connect(hostName, 1883)
+        mqttClient.on_connect = on_connect
         
-#         print(LoadCell_data)
-        time.sleep(1)
+    except ConnectionRefusedError:
+        print(f"({os.path.basename(__file__)}) Connection refused")
+    
+    #Subscribe to sensors topics
+    mqttClient.subscribe("IMU_data")
+    mqttClient.subscribe("RazorIMU_data")
+    mqttClient.subscribe("CAN_data")
+    mqttClient.subscribe("LoadCell_data") 
+     
+    # Set callback functions
+    mqttClient.on_message = on_message    
+    mqttClient.message_callback_add("IMU_data", on_IMU_data)
+    
+    #Keep the connection alive forever.
+    mqttClient.loop_forever()
+    
+    #to stop the forever loop
+#     mqttClient.disconnect()
