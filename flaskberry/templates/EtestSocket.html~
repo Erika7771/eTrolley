@@ -19,7 +19,10 @@
 
             // Event handler for new connections.
             // The callback function is invoked when a connection with the
-            // server is established.      
+            // server is established.
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'I\'m connected!'});
+            });            
             
             // Print the data received on the sensors channels
             socket.on('IMU_data', function(msg) {
@@ -70,7 +73,7 @@
 </head>
 <body>
    <div>
-    <h1>Raw Data</h1>
+    <h1>Flask-SocketIO Raw Data</h1>
     <p>Async mode is: <b>{{ async_mode }}</b></p>
     <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>
     <h2>Received data:</h2>

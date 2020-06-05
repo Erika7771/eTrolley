@@ -91,7 +91,7 @@ $(function () {
         }
     } 
     
-    //Check the connection
+    //Connect to the WebSockets
     var namespace = '/sensors';
     var socket = io(namespace);
     socket.close();    
@@ -506,7 +506,7 @@ $(function () {
     }  
     
     /* Send to Flask server the action to execute when recording (start or stop)
-     * and the relative sensors.*/
+     * and the concerned sensors.*/
     function Recording(action){
         var selectedSensors = $('#selectRecordings').val();        
         socket.emit('record',[action, selectedSensors]);

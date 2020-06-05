@@ -1,6 +1,8 @@
+#---------------------------------------------------------------------
+#Blueprint example. Show the cpu usage info on the url /api/cpu_usage
+#---------------------------------------------------------------------
 import psutil
 import numpy as np
-#import socket_client
 
 from flask import (
     Blueprint, jsonify

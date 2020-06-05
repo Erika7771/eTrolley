@@ -1,12 +1,8 @@
-import time
 import can
 import threading
 import writeToCSV as CSV
 import binascii
 from utils import Reading_CAN
-from math import ceil
-
-times = 5 #number of messages to send
 
 message = Reading_CAN()
 
@@ -26,15 +22,16 @@ def read():
     while True:
         msg = message.bus.recv(0.0) #set waiting time [s]. If 0.0 non-blocking
         if msg:
-            if len(message.data) > 5:  
+            if len(message.data) > 50: # Set maximum buffer size
                 message.clear()
-            if msg.arbitration_id == 0x0F6:    
+            if msg.arbitration_id == 0x0F6:   # This is the ID of the Ardunio
                 msg_hex = binascii.hexlify(msg.data).decode('ascii') #convert from bytearray to hex
                 data = [int(msg_hex[0:8],16), int(msg_hex[8:12],16),int(msg_hex[12:16],16)]
-                message.data.append(data)
-                if message.data_queue:
-                    message.data_queue.put(data)
-            
+                message.data.append(data) #Add the last reading to the buffer
+                if message.data_queue: #Put the reading in the queue if recording
+                    message.data_queue.put(data) 
+ 
+# Set the ID of the message based on the type of command send. 
 def command(data):
     for key in data.keys():        
         if key == 'speed':
@@ -50,6 +47,7 @@ def command(data):
             ID = 4
             send(ID, int(data[key]))
 
+# initialize the CAN interface and start the background thread that listen on the bus.
 def init():
     bustype = 'socketcan'
     channel = 'can0'

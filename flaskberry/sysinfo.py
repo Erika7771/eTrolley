@@ -1,3 +1,7 @@
+#---------------------------------------------------------------------
+# Blueprint to render the sysinfo page
+#---------------------------------------------------------------------
+
 import functools
 from datetime import datetime
 import platform
@@ -95,8 +99,8 @@ def cpu_temperature():
         'temperature': 0,
         'color': 'white'
     }
-    try:
-        cpuTemp = float(subprocess.check_output(["vcgencmd measure_temp"], shell = True).split('=')[1].split('\'')[0])
+    try:        
+        cpuTemp = float(subprocess.check_output(["vcgencmd measure_temp"], shell = True).decode("utf-8").split("=")[1].split("'")[0])
         cpuInfo['temperature'] = cpuTemp
         
         if cpuTemp > 40 and cpuTemp < 50:

@@ -1,3 +1,7 @@
+#---------------------------------------------------------------------
+# Blueprint to render the charts page
+#---------------------------------------------------------------------
+
 from flask import (
     Blueprint, jsonify, Flask, render_template
 )

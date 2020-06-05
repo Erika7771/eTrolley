@@ -1,3 +1,8 @@
+#----------------------------------------------------------------------------------
+# This module was used in the architecture with the Local Server.
+# It is no longer utilized, but it may help to understand how it worked. 
+#----------------------------------------------------------------------------------
+
 import logging
 import eventlet
 import socketio

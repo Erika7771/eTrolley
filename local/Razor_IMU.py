@@ -14,17 +14,18 @@ def read():
       
     if len(r.buff_vel) > 50 or len(r.buff_acc) > 50:
         r.clear()
-    data_acc = Razor_IMU.readAccel()       
+    data_acc = Razor_IMU.readAccel() # Get one measurement  
     data_vel = Razor_IMU.readGyro()
-    r.buff_acc.append(list(data_acc.values()))
+    r.buff_acc.append(list(data_acc.values())) #Add the last reading to the buffer
     r.buff_vel.append(list(data_vel.values()))
-    if r.data_queue_acc:
+    if r.data_queue_acc: #Put the reading in the queue if recording
         r.data_queue_acc.put(list(data_acc.values()))
     if r.data_queue_vel:
         r.data_queue_vel.put(list(data_vel.values()))
     
     time.sleep(0.003)     
 
+#Initialize the IMU and start reading the sensor.
 def init():
     global Razor_IMU
     try:
@@ -33,7 +34,7 @@ def init():
         # Start background process
         t_read = threading.Thread(target=read)
         t_read.start()
-    except OSError:
+    except OSError: 
         print("Connecting Razor IMU...")
         time.sleep(1)
         init()
@@ -51,8 +52,3 @@ def record(sensor):
 def record_stop(sensor):
      dataType = 'acc' if sensor=='Razor_acc' else  'vel'
      r.record_stop(dataType=dataType)
-
-if __name__ == "__main__":
-    while True:
-        time.sleep(1)       
-        

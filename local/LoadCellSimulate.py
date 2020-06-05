@@ -1,3 +1,6 @@
+#----------------------------------------------------------------------------------
+# Compute random values to compesate for the broken load cell.
+#----------------------------------------------------------------------------------
 import logging
 import time
 import threading
@@ -17,8 +20,8 @@ def read():
         measure = [[random.randint(-10000, 10000)] for i in range(2)]
         ms1 = (measure[0])
         ms2 = (measure[1])
-        lista = np.linspace(ms1, ms2, 20)
-        lc.data.extend(np.reshape(lista, (20,1)).tolist())        
+        lista = np.linspace(ms1, ms2, 10, dtype=int)
+        lc.data.extend(np.reshape(lista, (10,1)).tolist())        
         if lc.data_queue:
             lc.data_queue.put(ms1)
             lc.data_queue.put(ms2)

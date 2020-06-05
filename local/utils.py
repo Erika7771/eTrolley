@@ -1,3 +1,7 @@
+#----------------------------------------------------------------------------------
+# Contain the classes of the sensors
+#----------------------------------------------------------------------------------
+
 import multiprocessing
 import writeToCSV as CSV
 
@@ -24,20 +28,22 @@ class Reading_IMU:
   
     def record(self,dataType,sensorName):    
         if dataType == 'acc':
-            self.data_queue_acc = multiprocessing.Queue()
-            self.csvfile_acc = CSV.create_file(sensorName)
+            self.data_queue_acc = multiprocessing.Queue() #Initialize the queue used by the writing process 
+            self.csvfile_acc = CSV.create_file(sensorName) # Create a new CSV file
+            # Configure and start the writing process
             self.writer_process_acc = multiprocessing.Process(target = CSV.write_file, args=(self.csvfile_acc, sensorName, self.data_queue_acc, Reading_IMU.STOP_TOKEN))
             self.writer_process_acc.start()    
         elif  dataType == 'vel':
             self.data_queue_vel = multiprocessing.Queue()
             self.csvfile_vel = CSV.create_file(sensorName)
             self.writer_process_vel = multiprocessing.Process(target = CSV.write_file, args=(self.csvfile_vel, sensorName, self.data_queue_vel, Reading_IMU.STOP_TOKEN))
-            self.writer_process_vel.start()  
-
+            self.writer_process_vel.start()
+            
+    #Stop the writing process by putting a token in the queue and reinitialize the csv and queue objects.
     def record_stop(self, dataType):    
         if dataType == 'acc':
             self.csvfile_acc = None
-            self.data_queue_acc.put(Reading_IMU.STOP_TOKEN)
+            self.data_queue_acc.put(Reading_IMU.STOP_TOKEN) 
             self.writer_process_acc.join()
             self.data_queue_acc = None
         elif dataType == 'vel':

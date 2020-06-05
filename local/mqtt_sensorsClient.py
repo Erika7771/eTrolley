@@ -1,16 +1,13 @@
-import paho.mqtt.client as mqtt
-import paho.mqtt.publish as publish
-import paho.mqtt.subscribe as subscribe
+#----------------------------------------------------------------------------------
+#MQTT client that manages the sensors and the motors.
+#----------------------------------------------------------------------------------
 
-import logging
-import eventlet
-import socketio
+import paho.mqtt.client as mqtt
 import json
 import writeToCSV as CSV
 import time
 import threading
 import os.path
-import ast
 # Sensors
 import IMU 
 import Razor_IMU
@@ -18,12 +15,12 @@ import CAN
 
 # My load cell has a broken wire, set the variable to False to read the true data
 ignoreLoadCell = True 
-
 if ignoreLoadCell:
     import LoadCellSimulate as LoadCell
 else:
     import LoadCell    
-
+    
+    
 hostName = "192.168.4.1"
 recording = False
 
@@ -31,7 +28,6 @@ def on_message(client, userdata, message):
     print("message received " ,str(message.payload.decode('utf-8')))
     print("message topic=",message.topic)
     print("message qos=",message.qos)
-    print("message retain flag=",message.retain)
 
 def getBuffers(sensorName):
     raw_data = json.dumps(sensorName.get_buffers())
@@ -116,6 +112,8 @@ def on_connect(client, userdata, flags, rc):
         print(f"(Error value: {rc}). Connection refused")
     return    
 
+# Start the sensors, connect to the broker, start background thread to publish the data and
+# susbribe to the channels used to manage the recordings and the motors. 
 if __name__ == '__main__':
     
     #Sensors initialization
@@ -136,7 +134,7 @@ if __name__ == '__main__':
     
     # message_callback_add(Topic, Function) executes Function when a new message is published
     # on Topic. on_message is called whenever a new message is published on the subscribed channels
-    # for which no other callback function is defined    
+    # for which no other callback function is defined.   
     mqttClient.on_message = on_message    
     mqttClient.message_callback_add("record", on_record)
     mqttClient.message_callback_add("motorsControl", on_motorsControl)
@@ -145,6 +143,7 @@ if __name__ == '__main__':
     thread = threading.Thread(target = publish_data, daemon=True)
     thread.start()
     
+    # Subscribe to the topics used to manage the user inputs.
     mqttClient.subscribe("record")
     mqttClient.subscribe("motorsControl")
     

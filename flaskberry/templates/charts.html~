@@ -204,7 +204,7 @@
               <div class="card-body">
                 <div class="d-flex">
                   <p class="d-flex flex-column">
-                    <span class="text-bold text-lg">Razor IMU Angular Velocity</span>
+                    <span class="text-bold text-lg">IMU SparkFun Angular Velocity</span>
                   </p>
                 </div>
                 <!-- /.d-flex -->
@@ -298,14 +298,14 @@
 
 <!-- jQuery -->
 <script src="../static/plugins/jquery/jquery.min.js"></script>
-<script src="/static/dist/js/jquery-1.12.4.min.js" crossorigin="anonymous"></script>
-<script src="/static/dist/js/socket.io.js"  crossorigin="anonymous"></script>
-<script src="/static/dist/js/jquery-3.4.1.slim.min.js"  crossorigin="anonymous"></script>
+<script src="/static/dist/js/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="/static/dist/js/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+<script src="/static/dist/js/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <!-- Popper -->
-<script src="/static/dist/js/popper.min.js" crossorigin="anonymous"></script>
+<script src="/static/dist/js/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link rel="stylesheet" href="/static/dist/css/bootstrap.min.css" crossorigin="anonymous">
-<script src="/static/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/static/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="/static/dist/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="/static/dist/js/bootstrap-select.min.js"></script>
